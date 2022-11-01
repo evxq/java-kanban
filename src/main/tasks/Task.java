@@ -3,7 +3,7 @@ package main.tasks;
 public class Task {
     private String name;
     private String description;
-    private int id;
+    private Integer id;
     private String status;
 
     public Task(String name, String description, String status) {
@@ -38,7 +38,7 @@ public class Task {
         this.id = id;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 

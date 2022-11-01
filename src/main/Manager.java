@@ -74,8 +74,8 @@ public class Manager {
     }
 
     public void updateTask(Task task) {                                   // 2.5 Обновление Task. Новая версия Task с верным идентификатором передаётся в виде параметра
-        if (Integer.valueOf(task.getId()).equals(null)) {
-            System.out.println("Неверный ID");
+        if (task.getId() == null) {
+                System.out.println("Неверный ID");
         } else if (!taskMap.containsKey(task.getId())) {
             System.out.println("Неверный ID");
         } else {
@@ -84,18 +84,18 @@ public class Manager {
     }
 
     public void updateSubtask(Subtask subtask) {                          // 2.5 Обновление Subtask. Новая версия Subtask с верным идентификатором передаётся в виде параметра
-        if (Integer.valueOf(subtask.getId()).equals(null)) {
+        if (subtask.getId() == null) {
             System.out.println("Неверный ID");
         } else if (!subtaskMap.containsKey(subtask.getId())) {
             System.out.println("Неверный ID");
         } else {
-            subtask.getEpic().checkEpicStatus();                              // Когда меняется статус подзадачи в эпике, необходимо проверить статус эпика
+            subtask.getEpic().checkEpicStatus();                          // Когда меняется статус подзадачи в эпике, необходимо проверить статус эпика
             subtaskMap.put(subtask.getId(), subtask);
         }
     }
 
     public void updateEpic(Epic epic) {                                   // 2.5 Обновление Epic. Новая версия Epic с верным идентификатором передаётся в виде параметра
-        if (Integer.valueOf(epic.getId()).equals(null)) {
+        if (epic.getId() == null) {
             System.out.println("Неверный ID");
         } else if (!epicMap.containsKey(epic.getId())) {
             System.out.println("Неверный ID");
@@ -110,6 +110,7 @@ public class Manager {
     }
 
     public void deleteSubtask(int id) {                                   // 2.6 Удаление Subtask по идентификатору
+        subtaskMap.get(id).getEpic().getEpicTaskList().remove(subtaskMap.get(id));
         subtaskMap.remove(id);
     }
 

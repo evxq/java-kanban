@@ -44,9 +44,11 @@ public class Main {
         System.out.println(manager.getTaskList());
 
         System.out.println(manager.getEpicList());
-        System.out.println(manager.getSubtaskList());
         manager.deleteEpic(6);
         System.out.println(manager.getEpicList());
+
+        System.out.println(manager.getSubtaskList());
+        manager.deleteSubtask(5);
         System.out.println(manager.getSubtaskList());
     }
 }
