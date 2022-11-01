@@ -1,3 +1,9 @@
+package main;
+
+import main.tasks.Epic;
+import main.tasks.Subtask;
+import main.tasks.Task;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -8,27 +14,15 @@ public class Manager {
     HashMap<Integer, Epic> epicMap = new HashMap<>();
 
     public ArrayList<Task> getTaskList() {                                // 2.1 Получение списка всех Task
-        ArrayList<Task> taskList = new ArrayList<>();
-        for (Task task : taskMap.values()) {
-            taskList.add(task);
-        }
-        return taskList;
+        return new ArrayList(taskMap.values());
     }
 
     public ArrayList<Subtask> getSubtaskList() {                          // 2.1 Получение списка всех Subtask
-        ArrayList<Subtask> subtaskList = new ArrayList<>();
-        for (Subtask subtask : subtaskMap.values()) {
-            subtaskList.add(subtask);
-        }
-        return subtaskList;
+        return new ArrayList(subtaskMap.values());
     }
 
     public ArrayList<Epic> getEpicList() {                                // 2.1 Получение списка всех Epic
-        ArrayList<Epic> epicList = new ArrayList<>();
-        for (Epic epic : epicMap.values()) {
-            epicList.add(epic);
-        }
-        return epicList;
+        return new ArrayList(epicMap.values());
     }
 
     public void deleteAllTasks() {                                        // 2.2 Удаление всех Task
@@ -80,17 +74,35 @@ public class Manager {
     }
 
     public void updateTask(Task task) {                                   // 2.5 Обновление Task. Новая версия Task с верным идентификатором передаётся в виде параметра
-        taskMap.put(task.getId(), task);
+        if (Integer.valueOf(task.getId()).equals(null)) {
+            System.out.println("Неверный ID");
+        } else if (!taskMap.containsKey(task.getId())) {
+            System.out.println("Неверный ID");
+        } else {
+            taskMap.put(task.getId(), task);
+        }
     }
 
     public void updateSubtask(Subtask subtask) {                          // 2.5 Обновление Subtask. Новая версия Subtask с верным идентификатором передаётся в виде параметра
-        subtask.getEpic().checkEpicStatus();                              // Когда меняется статус подзадачи в эпике, необходимо проверить статус эпика
-        subtaskMap.put(subtask.getId(), subtask);
+        if (Integer.valueOf(subtask.getId()).equals(null)) {
+            System.out.println("Неверный ID");
+        } else if (!subtaskMap.containsKey(subtask.getId())) {
+            System.out.println("Неверный ID");
+        } else {
+            subtask.getEpic().checkEpicStatus();                              // Когда меняется статус подзадачи в эпике, необходимо проверить статус эпика
+            subtaskMap.put(subtask.getId(), subtask);
+        }
     }
 
     public void updateEpic(Epic epic) {                                   // 2.5 Обновление Epic. Новая версия Epic с верным идентификатором передаётся в виде параметра
-        epic.checkEpicStatus();
-        epicMap.put(epic.getId(), epic);
+        if (Integer.valueOf(epic.getId()).equals(null)) {
+            System.out.println("Неверный ID");
+        } else if (!epicMap.containsKey(epic.getId())) {
+            System.out.println("Неверный ID");
+        } else {
+            epic.checkEpicStatus();
+            epicMap.put(epic.getId(), epic);
+        }
     }
 
     public void deleteTask(int id) {                                      // 2.6 Удаление Task по идентификатору
@@ -102,6 +114,9 @@ public class Manager {
     }
 
     public void deleteEpic(int id) {                                      // 2.6 Удаление Epic по идентификатору
+        for (Subtask subtask : epicMap.get(id).getEpicTaskList()) {
+            subtaskMap.remove(subtask.getId());
+        }
         epicMap.remove(id);
     }
 

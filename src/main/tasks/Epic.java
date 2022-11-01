@@ -1,3 +1,5 @@
+package main.tasks;
+
 import java.util.ArrayList;
 
 public class Epic extends Task {
@@ -26,23 +28,24 @@ public class Epic extends Task {
                 statusProg++;
             }
         }
-        if ((statusNew != 0 && statusDone != 0) || statusProg != 0) {
-            this.setStatus("IN_PROGRESS");
-        } else if (statusDone == 0 && statusProg == 0) {
+
+        if (statusDone == 0 && statusProg == 0) {
             this.setStatus("NEW");
         } else if (statusNew == 0 && statusProg == 0) {
             this.setStatus("DONE");
+        } else {
+            this.setStatus("IN_PROGRESS");
         }
     }
 
     @Override
     public String toString() {
-        return "\n" +
-                "Эпик ID" + this.getId() +
-                ". " + this.getName() +
-                ": " + this.getDescription() +
-                ". Статус - " + this.getStatus() +
-                ".\n" +
-                "Подзадачи: " + epicTaskList;
+        return "Epic{" +
+                "epicTaskList=" + epicTaskList +
+                "name='" + this.getName() + '\'' +
+                ", description='" + this.getDescription() + '\'' +
+                ", id=" + this.getId() +
+                ", status='" + this.getStatus() + '\'' +
+                '}';
     }
 }

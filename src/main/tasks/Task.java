@@ -1,3 +1,5 @@
+package main.tasks;
+
 public class Task {
     private String name;
     private String description;
@@ -13,10 +15,19 @@ public class Task {
     public Task(String name, String description) {
         this.name = name;
         this.description = description;
+        this.status = "NEW";
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getName() {
         return name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getDescription() {
@@ -41,10 +52,11 @@ public class Task {
 
     @Override
     public String toString() {
-        return  "\n" +
-                "Задача ID" + id +
-                ". " + name +
-                ": " + description +
-                ". Статус - " + status;
+        return "Task{" +
+                "name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", id=" + id +
+                ", status='" + status + '\'' +
+                '}';
     }
 }

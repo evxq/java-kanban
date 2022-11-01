@@ -1,3 +1,9 @@
+package main;
+
+import main.tasks.Epic;
+import main.tasks.Subtask;
+import main.tasks.Task;
+
 import java.util.ArrayList;
 
 public class Main {
@@ -37,11 +43,10 @@ public class Main {
         manager.deleteTask(2);
         System.out.println(manager.getTaskList());
 
-        System.out.println(manager.getSubtaskList());
-
         System.out.println(manager.getEpicList());
+        System.out.println(manager.getSubtaskList());
         manager.deleteEpic(6);
         System.out.println(manager.getEpicList());
-
+        System.out.println(manager.getSubtaskList());
     }
 }
