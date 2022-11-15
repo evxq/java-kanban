@@ -1,5 +1,6 @@
 package main.tasks;
 
+import main.Status;
 import java.util.ArrayList;
 
 public class Epic extends Task {
@@ -20,21 +21,21 @@ public class Epic extends Task {
         int statusProg = 0;
 
         for (Subtask subtask : epicTaskList) {
-            if (subtask.getStatus().equals("NEW")) {
+            if (subtask.getStatus().equals(Status.NEW)) {
                 statusNew++;
-            } else if (subtask.getStatus().equals("DONE")) {
+            } else if (subtask.getStatus().equals(Status.DONE)) {
                 statusDone++;
-            } else if (subtask.getStatus().equals("IN_PROGRESS")) {
+            } else if (subtask.getStatus().equals(Status.IN_PROGRESS)) {
                 statusProg++;
             }
         }
 
         if (statusDone == 0 && statusProg == 0) {
-            this.setStatus("NEW");
+            this.setStatus(Status.NEW);
         } else if (statusNew == 0 && statusProg == 0) {
-            this.setStatus("DONE");
+            this.setStatus(Status.DONE);
         } else {
-            this.setStatus("IN_PROGRESS");
+            this.setStatus(Status.IN_PROGRESS);
         }
     }
 
