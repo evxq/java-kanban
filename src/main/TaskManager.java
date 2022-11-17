@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public interface TaskManager {
-    ArrayList<Task> getTaskList();                                 // 2.1 Получение списка всех Task
+    ArrayList<Task> getTaskList();                                // 2.1 Получение списка всех Task
 
     ArrayList<Subtask> getSubtaskList();                          // 2.1 Получение списка всех Subtask
 
@@ -46,5 +46,5 @@ public interface TaskManager {
 
     ArrayList<Subtask> getEpicSubtasks(int id);                   // 3.1 Получение списка всех подзадач определённого эпика
 
-//    List<Task> getHistory();
+    List<Task> getHistory();
 }

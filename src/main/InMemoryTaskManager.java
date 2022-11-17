@@ -1,17 +1,24 @@
 package main;
 
 import main.tasks.Epic;
+import main.tasks.Status;
 import main.tasks.Subtask;
 import main.tasks.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
     int id;
-    HashMap<Integer, Task> taskMap = new HashMap<>();                     // 1. Возможность хранить задачи всех типов
-    HashMap<Integer, Subtask> subtaskMap = new HashMap<>();
-    HashMap<Integer, Epic> epicMap = new HashMap<>();
+    private HashMap<Integer, Task> taskMap = new HashMap<>();                     // 1. Возможность хранить задачи всех типов
+    private HashMap<Integer, Subtask> subtaskMap = new HashMap<>();
+    private HashMap<Integer, Epic> epicMap = new HashMap<>();
+    private HistoryManager historyObject;
+
+    public InMemoryTaskManager() {
+        historyObject = Managers.getDefaultHistory();
+    }
 
     @Override
     public ArrayList<Task> getTaskList() {                                // 2.1 Получение списка всех Task
@@ -45,19 +52,19 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task getTaskById(int id) {                                     // 2.3 Получение Task по идентификатору
-        Managers.getDefaultHistory().add(taskMap.get(id));                // Добавить в список просмотренных задач
+        historyObject.add(taskMap.get(id));                               // Добавить в список просмотренных задач
         return taskMap.get(id);
     }
 
     @Override
     public Subtask getSubtaskById(int id) {                               // 2.3 Получение Subtask по идентификатору
-        Managers.getDefaultHistory().add(subtaskMap.get(id));
+        historyObject.add(subtaskMap.get(id));
         return subtaskMap.get(id);
     }
 
     @Override
     public Epic getEpicById(int id) {                                     // 2.3 Получение Epic по идентификатору
-        Managers.getDefaultHistory().add(epicMap.get(id));
+        historyObject.add(epicMap.get(id));
         return epicMap.get(id);
     }
 
@@ -145,5 +152,10 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public ArrayList<Subtask> getEpicSubtasks(int id) {                   // 3.1 Получение списка всех подзадач определённого эпика
         return epicMap.get(id).getEpicTaskList();
+    }
+
+    @Override
+    public List<Task> getHistory() {
+        return historyObject.getHistory();
     }
 }

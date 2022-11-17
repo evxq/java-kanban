@@ -1,6 +1,5 @@
 package main.tasks;
 
-import main.Status;
 import java.util.ArrayList;
 
 public class Epic extends Task {

@@ -1,7 +1,5 @@
 package main.tasks;
 
-import main.Status;
-
 public class Subtask extends Task {
     private Epic epic;
 
