@@ -1,9 +1,8 @@
-package main;
+package main.memoryManagers;
 
-import main.tasks.Epic;
-import main.tasks.Status;
-import main.tasks.Subtask;
-import main.tasks.Task;
+import main.Managers;
+import main.historyManagers.HistoryManager;
+import main.tasks.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;

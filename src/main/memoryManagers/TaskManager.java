@@ -1,4 +1,4 @@
-package main;
+package main.memoryManagers;
 
 import main.tasks.Epic;
 import main.tasks.Subtask;

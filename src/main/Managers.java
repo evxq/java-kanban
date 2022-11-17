@@ -1,5 +1,8 @@
 package main;
 
+import main.memoryManagers.*;
+import main.historyManagers.*;
+
 public class Managers {
     public static TaskManager getDefault() {
         return new InMemoryTaskManager();

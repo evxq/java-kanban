@@ -1,9 +1,7 @@
 package main;
 
-import main.tasks.Epic;
-import main.tasks.Status;
-import main.tasks.Subtask;
-import main.tasks.Task;
+import main.memoryManagers.TaskManager;
+import main.tasks.*;
 
 import java.util.ArrayList;
 

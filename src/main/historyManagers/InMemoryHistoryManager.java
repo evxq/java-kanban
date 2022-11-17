@@ -1,4 +1,4 @@
-package main;
+package main.historyManagers;
 
 import main.tasks.Task;
 
