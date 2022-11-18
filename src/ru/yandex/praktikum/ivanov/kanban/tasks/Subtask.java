@@ -1,4 +1,4 @@
-package main.tasks;
+package ru.yandex.praktikum.ivanov.kanban.tasks;
 
 public class Subtask extends Task {
     private Epic epic;

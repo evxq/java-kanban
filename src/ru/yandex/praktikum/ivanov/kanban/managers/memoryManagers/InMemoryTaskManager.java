@@ -1,15 +1,15 @@
-package main.memoryManagers;
+package ru.yandex.praktikum.ivanov.kanban.managers.memoryManagers;
 
-import main.Managers;
-import main.historyManagers.HistoryManager;
-import main.tasks.*;
+import ru.yandex.praktikum.ivanov.kanban.managers.Managers;
+import ru.yandex.praktikum.ivanov.kanban.managers.historyManagers.HistoryManager;
+import ru.yandex.praktikum.ivanov.kanban.tasks.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
-    int id;
+    private int id;
     private HashMap<Integer, Task> taskMap = new HashMap<>();                     // 1. Возможность хранить задачи всех типов
     private HashMap<Integer, Subtask> subtaskMap = new HashMap<>();
     private HashMap<Integer, Epic> epicMap = new HashMap<>();

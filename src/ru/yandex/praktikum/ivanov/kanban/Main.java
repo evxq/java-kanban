@@ -1,7 +1,8 @@
-package main;
+package ru.yandex.praktikum.ivanov.kanban;
 
-import main.memoryManagers.TaskManager;
-import main.tasks.*;
+import ru.yandex.praktikum.ivanov.kanban.managers.Managers;
+import ru.yandex.praktikum.ivanov.kanban.managers.memoryManagers.TaskManager;
+import ru.yandex.praktikum.ivanov.kanban.tasks.*;
 
 import java.util.ArrayList;
 

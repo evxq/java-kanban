@@ -1,4 +1,4 @@
-package main.tasks;
+package ru.yandex.praktikum.ivanov.kanban.tasks;
 
 import java.util.ArrayList;
 

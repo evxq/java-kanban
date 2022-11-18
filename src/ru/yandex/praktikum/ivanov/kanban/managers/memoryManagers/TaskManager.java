@@ -1,8 +1,6 @@
-package main.memoryManagers;
+package ru.yandex.praktikum.ivanov.kanban.managers.memoryManagers;
 
-import main.tasks.Epic;
-import main.tasks.Subtask;
-import main.tasks.Task;
+import ru.yandex.praktikum.ivanov.kanban.tasks.*;
 
 import java.util.ArrayList;
 import java.util.List;

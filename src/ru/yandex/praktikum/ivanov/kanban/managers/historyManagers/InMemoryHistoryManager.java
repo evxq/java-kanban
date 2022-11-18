@@ -1,6 +1,6 @@
-package main.historyManagers;
+package ru.yandex.praktikum.ivanov.kanban.managers.historyManagers;
 
-import main.tasks.Task;
+import ru.yandex.praktikum.ivanov.kanban.tasks.Task;
 
 import java.util.ArrayList;
 import java.util.List;
