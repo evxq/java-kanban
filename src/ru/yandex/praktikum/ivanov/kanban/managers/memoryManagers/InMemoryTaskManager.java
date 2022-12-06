@@ -4,6 +4,7 @@ import ru.yandex.praktikum.ivanov.kanban.managers.Managers;
 import ru.yandex.praktikum.ivanov.kanban.managers.historyManagers.HistoryManager;
 import ru.yandex.praktikum.ivanov.kanban.tasks.*;
 
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,7 +52,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task getTaskById(int id) {                                     // 2.3 Получение Task по идентификатору
-        historyObject.add(taskMap.get(id));                               // Добавить в список просмотренных задач
+        historyObject.add(taskMap.get(id));                               // Добавить в список историю_просмотров
         return taskMap.get(id);
     }
 
@@ -132,17 +133,24 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteTask(int id) {                                      // 2.6 Удаление Task по идентификатору
         taskMap.remove(id);
+        historyObject.remove(id);                                         // <ТЗ-5> удаление Task из истории_просмотров
     }
 
     @Override
     public void deleteSubtask(int id) {                                   // 2.6 Удаление Subtask по идентификатору
-        subtaskMap.get(id).getEpic().getEpicTaskList().remove(subtaskMap.get(id));
+        subtaskMap.get(id).getEpic().getEpicTaskList().remove(subtaskMap.get(id));      // удаление Subtask из списка Epic
         subtaskMap.remove(id);
+        historyObject.remove(id);                                         // <ТЗ-5> удаление Subtask из истории_просмотров
     }
 
     @Override
     public void deleteEpic(int id) {                                      // 2.6 Удаление Epic по идентификатору
+        historyObject.remove(id);                                         // <ТЗ-5> удаление Epic'а из истории_просмотров
         for (Subtask subtask : epicMap.get(id).getEpicTaskList()) {
+            historyObject.remove(subtask.getId());                        // <ТЗ-5> удаление всех подзадач Epic'а из истории_просмотров
+        }
+
+        for (Subtask subtask : epicMap.get(id).getEpicTaskList()) {       // удаление всех Subtask данного Epic
             subtaskMap.remove(subtask.getId());
         }
         epicMap.remove(id);

@@ -18,44 +18,61 @@ public class Main {
                            "Подобрать место на стене, забить гвоздь и повесить картину",
                                Status.DONE);
 
-        Epic epic1 = new Epic("Приготовить обед", "Приготовить первое и второе", new ArrayList<>());
+        Epic epic1 = new Epic("Приготовить обед", "Приготовить блюда и накрыть на стол", new ArrayList<>());
             Subtask subtask11 = new Subtask("Сварить суп",
                                          "Подготовить и нарезать все ингридиенты. Сварить в кастрюле",
-                                          Status.DONE, epic1);
+                                            Status.DONE, epic1);
             Subtask subtask12 = new Subtask("Приготовить второе блюдо",
                                          "Сварить рис и пожарить котлету",
-                                             Status.NEW, epic1);
+                                            Status.NEW, epic1);
+            Subtask subtask13 = new Subtask("Накрыть на стол",
+                                        "Разложить блюда в тарелки",
+                                            Status.NEW, epic1);
+
 
         Epic epic2 = new Epic("Выучить Java", "Выучить язык Java до уровня Junior", new ArrayList<>());
             Subtask subtask21 = new Subtask("Записаться на курсы",
                                          "Записаться на курсы Yandex Practicum",
                                              Status.IN_PROGRESS, epic2);
-        taskManager.createTask(task1);
-        taskManager.createTask(task2);
 
-        taskManager.createEpic(epic1);
-        taskManager.createSubtask(subtask11);
-        taskManager.createSubtask(subtask12);
+        taskManager.createTask(task1);          // 1
+        taskManager.createTask(task2);          // 2
 
-        taskManager.createEpic(epic2);
-        taskManager.createSubtask(subtask21);
+        taskManager.createEpic(epic1);          // 3
+        taskManager.createSubtask(subtask11);   // 4
+        taskManager.createSubtask(subtask12);   // 5
+        taskManager.createSubtask(subtask13);   // 6
+
+        taskManager.createEpic(epic2);          // 7
+        taskManager.createSubtask(subtask21);   // 8
 
         taskManager.getTaskById(1);
-        taskManager.getTaskById(2);
-        taskManager.getEpicById(3);
-        taskManager.getSubtaskById(4);
-        taskManager.getSubtaskById(5);
-        taskManager.getEpicById(6);
-        taskManager.getSubtaskById(7);
-        taskManager.getEpicById(6);
-        taskManager.getSubtaskById(5);
-        taskManager.getSubtaskById(4);
-        taskManager.getEpicById(3);
-        taskManager.getTaskById(2);
         taskManager.getTaskById(1);
+        taskManager.getTaskById(2);
+        taskManager.getTaskById(2);
+        taskManager.getEpicById(3);
+        taskManager.getEpicById(3);
+        taskManager.getSubtaskById(4);
+        taskManager.getSubtaskById(4);
+        taskManager.getSubtaskById(5);
+        taskManager.getSubtaskById(6);
+        taskManager.getSubtaskById(6);
+        taskManager.getEpicById(7);
+        taskManager.getEpicById(7);
+        taskManager.getSubtaskById(8);
+        taskManager.getSubtaskById(8);
 
         for (Task task : taskManager.getHistory()) {
-            System.out.println(task.getId());
+            System.out.print(task.getId() + " ");
         }
+
+        taskManager.deleteEpic(3);
+        System.out.println();
+
+        for (Task task : taskManager.getHistory()) {
+            System.out.print(task.getId() + " ");
+        }
+        // ПРИВЕТ! Задача очень тяжко сформулирована для моего восприятия, поэтому пока оставил описание логики в паре мест на случай, если я что-то понял не так
+        // Вскользь написано, что размер истории нужно удалять. Все-таки удаляем или нет?
     }
 }
