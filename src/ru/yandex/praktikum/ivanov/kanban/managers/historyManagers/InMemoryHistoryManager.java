@@ -8,27 +8,22 @@ import java.util.List;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
-//    private static final int HISTORY_CAPACITY = 10;
-    private HashMap<Integer, Node<Task>> historyMap = new HashMap<>();          // В ключах хранится id задач, а в значениях — узлы связного списка
     private CustomLinkedList<Task> customList = new CustomLinkedList<>();       // двусвязный список для хранения истории_просмотров
 
     @Override
     public void add(Task task) {
-        /*if (historyList.size() > HISTORY_CAPACITY) {           // Проверка размера истории_просмотров
-            historyList.remove(0);
-        }*/
         // если задача содержится в HashMap, то удалить ее из списка (removeNode), а затем добавить в конец списка (и обновить значение узла)
         // иначе: добавить задачу в конец списка и в HashMap
-        if (historyMap.containsKey(task.getId())) {
-            customList.removeNode(historyMap.get(task.getId()));
+        if (customList.historyMap.containsKey(task.getId())) {
+            customList.removeNode((task.getId()));
         }
         customList.linkLast(task);
-        historyMap.put(task.getId(), customList.last);
+        customList.historyMap.put(task.getId(), customList.tail);
     }
 
     @Override
     public void remove(int id) {                               // <ТЗ-5> удаление задач из истории_просмотра
-        customList.removeNode(historyMap.get(id));
+        customList.removeNode(id);
     }
 
     @Override
@@ -38,14 +33,15 @@ public class InMemoryHistoryManager implements HistoryManager {
 
 
     public class CustomLinkedList<T> {
-        public Node<T> head;
-        public Node<T> last;
+        private HashMap<Integer, Node<Task>> historyMap = new HashMap<>();          // <ТЗ-5> В ключах хранится id задач, а в значениях — узлы связного списка
+        private Node<Task> head;
+        private Node<Task> tail;
         private int size = 0;
 
-        public void linkLast(T task) {                         // <ТЗ-5> Добавить задачу в конец двусвязного списка
-            final Node<T> oldTail = last;
-            final Node<T> newTail = new Node<>(oldTail, task, null);
-            last = newTail;
+        public void linkLast(Task task) {                         // <ТЗ-5> Добавить задачу в конец двусвязного списка
+            final Node<Task> oldTail = tail;
+            final Node<Task> newTail = new Node<Task>(oldTail, task, null);
+            tail = newTail;
             if (oldTail == null) {
                 head = newTail;
             } else {
@@ -54,18 +50,20 @@ public class InMemoryHistoryManager implements HistoryManager {
             size++;
         }
 
-        public ArrayList<T> getTasks() {                       // <ТЗ-5> собрать все задачи из двусвязного списка в обычный ArrayList
-            ArrayList<T> taskArray = new ArrayList<>();
-            for (Node<T> x = head; x != null; x = x.next) {
+        public ArrayList<Task> getTasks() {                       // <ТЗ-5> собрать все задачи из двусвязного списка в обычный ArrayList
+            ArrayList<Task> taskArray = new ArrayList<>();
+            Node<Task> x = head;
+            while (x != null) {
                 taskArray.add(x.data);
+                x = x.next;
             }
             return taskArray;
         }
 
-        public void removeNode(Node<T> node) {                 // <ТЗ-5> удаление узла из двусвязного списка
-            final T element = node.data;
-            final Node<T> next = node.next;
-            final Node<T> prev = node.prev;
+        public void removeNode(int id) {                 // <ТЗ-5> удаление узла из двусвязного списка
+            Node<Task> node = historyMap.get(id);
+            final Node<Task> next = node.next;
+            final Node<Task> prev = node.prev;
 
             if (prev == null) {
                 head = next;
@@ -75,7 +73,7 @@ public class InMemoryHistoryManager implements HistoryManager {
             }
 
             if (next == null) {
-                last = prev;
+                tail = prev;
             } else {
                 next.prev = prev;
                 node.next = null;
