@@ -27,7 +27,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
 
-    public class CustomLinkedList<T> {
+    public class CustomLinkedList<T extends Task> {
         private HashMap<Integer, Node<T>> historyMap = new HashMap<>();          // <ТЗ-5> В ключах хранится id задач, а в значениях — узлы связного списка
         private Node<T> head;
         private Node<T> tail;
@@ -42,12 +42,8 @@ public class InMemoryHistoryManager implements HistoryManager {
                 oldTail.setNext(newTail);
             }
 
-            if (task instanceof Task) {
-                Integer id = ((Task) task).getId();
-                historyMap.put(id, tail);
-            } else {
-                System.out.println("Некорректный тип задачи");
-            }
+            Integer id = task.getId();
+            historyMap.put(id, tail);
         }
 
         public ArrayList<T> getTasks() {                       // <ТЗ-5> собрать все задачи из двусвязного списка в обычный ArrayList
@@ -61,11 +57,11 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
 
         public void removeNode(int id) {                                   // <ТЗ-5> удаление узла из двусвязного списка
-            if (historyMap.get(id) == null) {
+            Node<T> node = historyMap.get(id);
+            if (node == null) {
                 return;
             }
 
-            Node<T> node = historyMap.get(id);
             final Node<T> next = node.getNext();
             final Node<T> prev = node.getPrev();
 
@@ -82,6 +78,7 @@ public class InMemoryHistoryManager implements HistoryManager {
                 next.setPrev(prev);
                 node.setNext(null);
             }
+            historyMap.remove(id);
         }
     }
 }
