@@ -4,7 +4,6 @@ import ru.yandex.praktikum.ivanov.kanban.managers.Managers;
 import ru.yandex.praktikum.ivanov.kanban.managers.historyManagers.HistoryManager;
 import ru.yandex.praktikum.ivanov.kanban.tasks.*;
 
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +17,22 @@ public class InMemoryTaskManager implements TaskManager {
 
     public InMemoryTaskManager() {
         historyObject = Managers.getDefaultHistory();
+    }
+
+    public HistoryManager getHistoryObject() {                            // <ТЗ-6>
+        return historyObject;
+    }
+
+    public HashMap<Integer, Task> getTaskMap() {                          // <ТЗ-6>
+        return taskMap;
+    }
+
+    public HashMap<Integer, Subtask> getSubtaskMap() {                    // <ТЗ-6>
+        return subtaskMap;
+    }
+
+    public HashMap<Integer, Epic> getEpicMap() {                          // <ТЗ-6>
+        return epicMap;
     }
 
     @Override
