@@ -1,4 +1,4 @@
-package ru.yandex.praktikum.ivanov.kanban.managers.memoryManagers;
+package ru.yandex.praktikum.ivanov.kanban.managers.tasksManagers;
 
 import ru.yandex.praktikum.ivanov.kanban.managers.Managers;
 import ru.yandex.praktikum.ivanov.kanban.managers.historyManagers.HistoryManager;

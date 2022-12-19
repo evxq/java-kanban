@@ -1,7 +1,7 @@
 package ru.yandex.praktikum.ivanov.kanban.managers;
 
 import ru.yandex.praktikum.ivanov.kanban.managers.historyManagers.*;
-import ru.yandex.praktikum.ivanov.kanban.managers.memoryManagers.*;
+import ru.yandex.praktikum.ivanov.kanban.managers.tasksManagers.*;
 
 public class Managers {
     public static TaskManager getDefault() {

@@ -1,76 +1,81 @@
 package ru.yandex.praktikum.ivanov.kanban;
 
-import ru.yandex.praktikum.ivanov.kanban.managers.Managers;
-import ru.yandex.praktikum.ivanov.kanban.managers.memoryManagers.TaskManager;
+import ru.yandex.praktikum.ivanov.kanban.managers.tasksManagers.FileBackedTaskManager;
 import ru.yandex.praktikum.ivanov.kanban.tasks.*;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class Main {
 
     public static void main(String[] args) {
-        TaskManager taskManager = Managers.getDefault();
+        File file = new File("C:\\Users\\ev\\dev\\java-kanban\\src\\ru\\yandex\\praktikum\\ivanov\\kanban\\save.csv");
+        FileBackedTaskManager fileTaskManager = FileBackedTaskManager.getDefaultFile(file);
 
         Task task1 = new Task("Купить кроссовки",
-                           "Выделить время в течение недели, чтобы сходить в магазин обуви",
-                               Status.NEW);
+                          "Выделить время в течение недели, чтобы сходить в магазин обуви",
+                                      Status.NEW);
         Task task2 = new Task("Повесить картину",
-                           "Подобрать место на стене, забить гвоздь и повесить картину",
-                               Status.DONE);
+                          "Подобрать место на стене, забить гвоздь и повесить картину",
+                                     Status.DONE);
 
         Epic epic1 = new Epic("Приготовить обед", "Приготовить блюда и накрыть на стол", new ArrayList<>());
             Subtask subtask11 = new Subtask("Сварить суп",
-                                         "Подготовить и нарезать все ингридиенты. Сварить в кастрюле",
-                                            Status.DONE, epic1);
+                                        "Подготовить и нарезать все ингридиенты. Сварить в кастрюле",
+                                                   Status.DONE, epic1);
             Subtask subtask12 = new Subtask("Приготовить второе блюдо",
-                                         "Сварить рис и пожарить котлету",
-                                            Status.NEW, epic1);
+                                        "Сварить рис и пожарить котлету",
+                                                   Status.NEW, epic1);
             Subtask subtask13 = new Subtask("Накрыть на стол",
                                         "Разложить блюда в тарелки",
-                                            Status.NEW, epic1);
+                                                   Status.NEW, epic1);
 
 
         Epic epic2 = new Epic("Выучить Java", "Выучить язык Java до уровня Junior", new ArrayList<>());
             Subtask subtask21 = new Subtask("Записаться на курсы",
-                                         "Записаться на курсы Yandex Practicum",
-                                             Status.IN_PROGRESS, epic2);
+                                        "Записаться на курсы Yandex Practicum",
+                                                   Status.IN_PROGRESS, epic2);
 
-        taskManager.createTask(task1);          // 1
-        taskManager.createTask(task2);          // 2
+        // создаем задачи в менеджере работы с файлом
+        fileTaskManager.createTask(task1);          // 1
+        fileTaskManager.createTask(task2);          // 2
 
-        taskManager.createEpic(epic1);          // 3
-        taskManager.createSubtask(subtask11);   // 4
-        taskManager.createSubtask(subtask12);   // 5
-        taskManager.createSubtask(subtask13);   // 6
+        fileTaskManager.createEpic(epic1);          // 3
+        fileTaskManager.createSubtask(subtask11);   // 4
+        fileTaskManager.createSubtask(subtask12);   // 5
+        fileTaskManager.createSubtask(subtask13);   // 6
 
-        taskManager.createEpic(epic2);          // 7
-        taskManager.createSubtask(subtask21);   // 8
+        fileTaskManager.createEpic(epic2);          // 7
+        fileTaskManager.createSubtask(subtask21);   // 8
 
-        taskManager.getTaskById(1);
-        taskManager.getTaskById(1);
-        taskManager.getTaskById(2);
-        taskManager.getTaskById(2);
-        taskManager.getEpicById(3);
-        taskManager.getEpicById(3);
-        taskManager.getSubtaskById(4);
-        taskManager.getSubtaskById(4);
-        taskManager.getSubtaskById(5);
-        taskManager.getSubtaskById(6);
-        taskManager.getSubtaskById(6);
-        taskManager.getEpicById(7);
-        taskManager.getEpicById(7);
-        taskManager.getSubtaskById(8);
-        taskManager.getSubtaskById(8);
+        // вызываем задачи, заполняем историю менеджера, обновляем файл сохранения
+        fileTaskManager.getTaskById(1);
+        fileTaskManager.getTaskById(1);
+        fileTaskManager.getTaskById(2);
+        fileTaskManager.getTaskById(2);
+        fileTaskManager.getEpicById(3);
+        fileTaskManager.getEpicById(3);
+        fileTaskManager.getSubtaskById(4);
+        fileTaskManager.getSubtaskById(4);
+        fileTaskManager.getSubtaskById(5);
+        fileTaskManager.getSubtaskById(6);
+        fileTaskManager.getSubtaskById(6);
+        fileTaskManager.getEpicById(7);
+        fileTaskManager.getEpicById(7);
+        fileTaskManager.getSubtaskById(8);
+        fileTaskManager.getSubtaskById(8);
 
-        for (Task task : taskManager.getHistory()) {
+        for (Task task : fileTaskManager.getHistory()) {         // проверка содержания менеджера истории
             System.out.print(task.getId() + " ");
+            System.out.println(task);
         }
-
-        taskManager.deleteEpic(3);
         System.out.println();
 
-        for (Task task : taskManager.getHistory()) {
+        FileBackedTaskManager loadedTaskManager = FileBackedTaskManager.loadFromFile(file);        // создаем новый менеджер из файла
+
+        for (Task task : loadedTaskManager.getHistory()) {       // проверка содержания истории загруженного менеджера
             System.out.print(task.getId() + " ");
+            System.out.println(task);
         }
     }
 }
