@@ -1,11 +1,6 @@
-id,type,name,status,description,epic
-1,TASK,Купить кроссовки,NEW,Выделить время в течение недели, чтобы сходить в магазин обуви
-2,TASK,Повесить картину,DONE,Подобрать место на стене, забить гвоздь и повесить картину
-3,EPIC,Приготовить обед,IN_PROGRESS,Приготовить блюда и накрыть на стол
-7,EPIC,Выучить Java,IN_PROGRESS,Выучить язык Java до уровня Junior
-4,SUBTASK,Сварить суп,DONE,Подготовить и нарезать все ингридиенты. Сварить в кастрюле,3
-5,SUBTASK,Приготовить второе блюдо,NEW,Сварить рис и пожарить котлету,3
-6,SUBTASK,Накрыть на стол,NEW,Разложить блюда в тарелки,3
-8,SUBTASK,Записаться на курсы,IN_PROGRESS,Записаться на курсы Yandex Practicum,7
+id,type,name,status,description,duration,startTime,epic
+1,TASK,task1,NEW,descriptionTask1,PT15M,2023-01-15T01:09:43.136718100
+2,EPIC,epic1,DONE,descriptionEpic1,PT15M,2023-01-15T01:39:43.136718100
+3,SUBTASK,subtask11,DONE,descriptionSubtask11,PT15M,2023-01-15T01:39:43.136718100,2
 
-1,2,3,4,5,6,7,8
+1,2,3

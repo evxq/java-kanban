@@ -1,4 +1,4 @@
-package ru.yandex.praktikum.ivanov.kanban;
+package ru.yandex.praktikum.ivanov.kanban.testManagers;
 
 import ru.yandex.praktikum.ivanov.kanban.managers.Managers;
 import ru.yandex.praktikum.ivanov.kanban.managers.tasksManagers.TaskManager;
@@ -63,6 +63,7 @@ public class Main {
         taskManager.getSubtaskById(8);
         taskManager.getSubtaskById(8);
 
+        System.out.println("Список истории:");
         for (Task task : taskManager.getHistory()) {
             System.out.print(task.getId() + " ");
             System.out.println(task);
@@ -71,6 +72,7 @@ public class Main {
         taskManager.deleteEpic(3);
         System.out.println();
 
+        System.out.println("Список истории после удаления эпика:");
         for (Task task : taskManager.getHistory()) {
             System.out.print(task.getId() + " ");
             System.out.println(task);

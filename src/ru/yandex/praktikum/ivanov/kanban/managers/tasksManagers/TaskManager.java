@@ -4,6 +4,7 @@ import ru.yandex.praktikum.ivanov.kanban.tasks.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public interface TaskManager {
     ArrayList<Task> getTaskList();                                // 2.1 Получение списка всех Task
@@ -45,4 +46,6 @@ public interface TaskManager {
     ArrayList<Subtask> getEpicSubtasks(int id);                   // 3.1 Получение списка всех подзадач определённого эпика
 
     List<Task> getHistory();
+
+    Set<Task> getPrioritizedTasks();
 }

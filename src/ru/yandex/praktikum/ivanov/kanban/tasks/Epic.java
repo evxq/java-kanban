@@ -1,9 +1,11 @@
 package ru.yandex.praktikum.ivanov.kanban.tasks;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class Epic extends Task {
-    private ArrayList<Subtask> epicTaskList = new ArrayList<>();
+    private final ArrayList<Subtask> epicTaskList;
+    private LocalDateTime endTime;
 
     public Epic(String name, String description, ArrayList<Subtask> epicTaskList) {
         super(name, description);
@@ -38,14 +40,25 @@ public class Epic extends Task {
         }
     }
 
+    public void setEndTime(LocalDateTime endTime) {                 // <ТЗ-7>
+        this.endTime = endTime;
+    }
+
+    @Override
+    public LocalDateTime getEndTime() {                             // <ТЗ-7>
+        return endTime;
+    }
+
     @Override
     public String toString() {
         return "Epic{" +
                 "epicTaskList=" + epicTaskList +
-                "name='" + this.getName() + '\'' +
+                ", name='" + this.getName() + '\'' +
                 ", description='" + this.getDescription() + '\'' +
                 ", id=" + this.getId() +
                 ", status='" + this.getStatus() + '\'' +
+                ", duration='" + this.getDuration() + '\'' +
+                ", startTime='" + this.getStartTime() + '\'' +
                 '}';
     }
 }
