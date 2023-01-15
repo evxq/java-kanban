@@ -19,7 +19,7 @@ public class InMemoryTaskManager implements TaskManager {
         historyObject = Managers.getDefaultHistory();
     }
 
-    public HistoryManager getHistoryObject() {                            // <ТЗ-6>
+    protected HistoryManager getHistoryObject() {                            // <ТЗ-6>
         return historyObject;
     }
 
@@ -89,7 +89,7 @@ public class InMemoryTaskManager implements TaskManager {
         return epicMap.get(id);
     }
 
-    public void checkTasksIntersection(Task task) {                       // <ТЗ-7> проверка пересечения задач
+    private void checkTasksIntersection(Task task) {                       // <ТЗ-7> проверка пересечения задач
         if (task.getStartTime() != null) {
             for (Task anotherTask: getPrioritizedTasks()) {
                 String errorText = task.getName() + " пересекается по времени с " + anotherTask.getName() + ". Задача " + task.getName() + " не может быть создана/изменена";
@@ -131,6 +131,22 @@ public class InMemoryTaskManager implements TaskManager {
         return null;
     }
 
+    private void checkEpicStartTime(Subtask subtask) {
+        if (subtask.getStartTime() != null &&
+                (subtask.getEpic().getStartTime() == null || subtask.getStartTime().isBefore(subtask.getEpic().getStartTime())) ) {    // <ТЗ-7> проверка и установка startTime Epic'a
+            subtask.getEpic().setStartTime(subtask.getStartTime());
+        }
+
+        if (subtask.getEndTime() != null &&
+                (subtask.getEpic().getEndTime() == null || subtask.getEndTime().isAfter(subtask.getEpic().getEndTime())) ) {           // <ТЗ-7> проверка и установка endTime Epic'a
+            subtask.getEpic().setEndTime(subtask.getEndTime());
+        }
+
+        if (subtask.getEpic().getStartTime() != null && subtask.getEpic().getEndTime() != null) {                                      // <ТЗ-7> перерасчет дюрации Epic'a
+            subtask.getEpic().setDuration(Duration.between(subtask.getEpic().getStartTime(), subtask.getEpic().getEndTime()));
+        }
+    }
+
     @Override
     public Subtask createSubtask(Subtask subtask) {                       // 2.4 Создание Subtask. Сам объект должен передаваться в качестве параметра
         try {
@@ -140,20 +156,8 @@ public class InMemoryTaskManager implements TaskManager {
             subtask.getEpic().getEpicTaskList().add(subtask);                 // добавить в соотвествующий список Epic
             subtask.getEpic().checkEpicStatus();                              // проверить статус соответствующего Epic
             subtaskMap.put(id, subtask);                                      // добавить в таблицу Subtask
+            checkEpicStartTime(subtask);
 
-            if (subtask.getStartTime() != null &&
-                    (subtask.getEpic().getStartTime() == null || subtask.getStartTime().isBefore(subtask.getEpic().getStartTime())) ) {    // <ТЗ-7> проверка и установка startTime Epic'a
-                subtask.getEpic().setStartTime(subtask.getStartTime());
-            }
-
-            if (subtask.getEndTime() != null &&
-                    (subtask.getEpic().getEndTime() == null || subtask.getEndTime().isAfter(subtask.getEpic().getEndTime())) ) {           // <ТЗ-7> проверка и установка endTime Epic'a
-                subtask.getEpic().setEndTime(subtask.getEndTime());
-            }
-
-            if (subtask.getEpic().getStartTime() != null && subtask.getEpic().getEndTime() != null) {                                      // <ТЗ-7> перерасчет дюрации Epic'a
-                subtask.getEpic().setDuration(Duration.between(subtask.getEpic().getStartTime(), subtask.getEpic().getEndTime()));
-            }
             return subtask;
         } catch (ValidationTaskException e) {
             System.out.println(e.getMessage());
@@ -197,6 +201,7 @@ public class InMemoryTaskManager implements TaskManager {
             } else {
                 subtask.getEpic().checkEpicStatus();                          // Когда меняется статус подзадачи в эпике, необходимо проверить статус эпика
                 subtaskMap.put(subtask.getId(), subtask);
+                checkEpicStartTime(subtask);
             }
         } catch (ValidationTaskException e) {
             System.out.println(e.getMessage());
@@ -251,6 +256,9 @@ public class InMemoryTaskManager implements TaskManager {
         return historyObject.getHistory();
     }
 
+    /*В ТЗ явно написано, что список приоритетных задач должен состоять из Тасков и Сабтасков.
+    * Я понял эту логику так: данный список показывает конкретные дела(действия), которые нужно сделать, а сам эпик не является таким делом, так как состоит из других дел (сабтасков)
+    * В общем, я сделал в соответствии с ТЗ  */
     @Override
     public Set<Task> getPrioritizedTasks() {
         Comparator<Task> startTimeComparator = (task1, task2) -> {
