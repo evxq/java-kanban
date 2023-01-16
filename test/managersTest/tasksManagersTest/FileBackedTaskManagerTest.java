@@ -10,8 +10,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class FileBackedTaskManagerTest extends TaskManagerTest {
+class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
     File file = new File("C:\\Users\\ev\\dev\\java-kanban\\src\\ru\\yandex\\praktikum\\ivanov\\kanban\\save.csv");
     FileBackedTaskManager fileTaskManager = FileBackedTaskManager.getDefaultFile(file);
     Task task1 = new Task("task1", "descriptionTask1", Status.NEW);
@@ -35,6 +36,18 @@ class FileBackedTaskManagerTest extends TaskManagerTest {
         fileTaskManager.getTaskById(1);
         fileTaskManager.getEpicById(2);
         fileTaskManager.getSubtaskById(3);
+
+        assertNotNull(fileTaskManager.getTaskList());
+        assertNotNull(fileTaskManager.getSubtaskList());
+        assertNotNull(fileTaskManager.getEpicList());
+        assertEquals(fileTaskManager.getTaskList().get(0), task1);
+        assertEquals(fileTaskManager.getSubtaskList().get(0), subtask11);
+        assertEquals(fileTaskManager.getEpicList().get(0).getId(), epic1.getId());
+        assertNotNull(fileTaskManager.getHistory());
+        assertEquals(fileTaskManager.getHistory().get(0), task1);
+        assertEquals(fileTaskManager.getHistory().get(1).getId(), epic1.getId());
+        assertEquals(fileTaskManager.getHistory().get(2), subtask11);
+
         FileBackedTaskManager loadedTaskManager = FileBackedTaskManager.loadFromFile(file);        // создаем новый менеджер из файла
 
         assertNotNull(loadedTaskManager.getTaskList());
@@ -43,7 +56,6 @@ class FileBackedTaskManagerTest extends TaskManagerTest {
         assertEquals(loadedTaskManager.getTaskList().get(0), task1);
         assertEquals(loadedTaskManager.getSubtaskList().get(0), subtask11);
         assertEquals(loadedTaskManager.getEpicList().get(0).getId(), epic1.getId());
-
         assertNotNull(loadedTaskManager.getHistory());
         assertEquals(loadedTaskManager.getHistory().get(0), task1);
         assertEquals(loadedTaskManager.getHistory().get(1).getId(), epic1.getId());

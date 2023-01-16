@@ -13,12 +13,12 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/* Привет.
-При первом коммите я некорректно сохранил в гите проект, хотя все тесты были сделаны.
-Поэтому прошу прощения за пустоту в тестах.
-В данной версии я также учел твои замечания по тестам */
-
 class HistoryManagerTest {
+
+    /* В текущей логике приложения тест истории без ТаскМенеджера не получится,
+    так как методы HistoryManager (add и remove) работают через Id Тасков,
+    который в свою очередь рассчитывается только в методе createTask класса TaskManager */
+
     HistoryManager historyManager = new InMemoryHistoryManager();
     TaskManager taskManager = Managers.getDefault();
     Task task1 = new Task("task1","descriptionTask1", Status.NEW);
@@ -26,20 +26,26 @@ class HistoryManagerTest {
     Task task3 = new Task("task3", "descriptionTask3", Status.IN_PROGRESS);
 
     @Test
-    void getHistory_returnHistory_addToHistory() {
+    void addToHistory_getHistory_returnHistory() {
         taskManager.createTask(task1);
         historyManager.add(task1);
         List<Task> history = historyManager.getHistory();
 
         assertNotNull(history, "история пустая");
         assertEquals(1, history.size(),"история не соответствует");
+    }
 
+    @Test
+    void getHistory_returnHistoryInOrderOfAdding() {
+        taskManager.createTask(task1);
         taskManager.createTask(task2);
         historyManager.add(task1);
         historyManager.add(task2);
+        historyManager.add(task1);          // дубликат для проверки перезаписи истории
 
-        List<Task> history2 = historyManager.getHistory();
-        assertEquals(2, history2.size(),"история не соответствует");
+        assertEquals(2, historyManager.getHistory().size(),"размер истории не соответствует");
+        assertEquals(2, historyManager.getHistory().get(0).getId(),"порядок вызова задачи не соответствует");
+        assertEquals(1, historyManager.getHistory().get(1).getId(),"порядок вызова задачи не соответствует");
     }
 
     @Test
@@ -53,8 +59,11 @@ class HistoryManagerTest {
         historyManager.remove(task1.getId());
         List<Task> history = historyManager.getHistory();
 
-        assertNotEquals(task1, history.get(0));
-        assertNotEquals(task1, history.get(1));
+        // Так как задачи неразрывно связаны с Id,
+        // то в данных тестах на наличие задачи в списке
+        // достаточно проверить только Id
+        assertNotEquals(task1.getId(), history.get(0).getId());
+        assertNotEquals(task1.getId(), history.get(1).getId());
     }
 
     @Test
@@ -68,8 +77,8 @@ class HistoryManagerTest {
         historyManager.remove(task2.getId());
         List<Task> history = historyManager.getHistory();
 
-        assertNotEquals(task2, history.get(0));
-        assertNotEquals(task2, history.get(1));
+        assertNotEquals(task2.getId(), history.get(0).getId());
+        assertNotEquals(task2.getId(), history.get(1).getId());
     }
 
     @Test
@@ -83,7 +92,7 @@ class HistoryManagerTest {
         historyManager.remove(task3.getId());
         List<Task> history = historyManager.getHistory();
 
-        assertNotEquals(task3, history.get(0));
-        assertNotEquals(task3, history.get(1));
+        assertNotEquals(task3.getId(), history.get(0).getId());
+        assertNotEquals(task3.getId(), history.get(1).getId());
     }
 }

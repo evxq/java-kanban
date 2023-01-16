@@ -14,21 +14,20 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 abstract class TaskManagerTest<T extends TaskManager> {
+
+    /* Не понял манипуляции с абстрактным методом.
+    Какого вида должен быть этот метод - тестовый или нет? возвращает значение или нет?
+    Как должна происходить инициализация?
+    и зачем он нужен, если в текущей реализации везде обходимся одной строчкой при создании объекта
+    Уже поздно, я плохо понимаю.. */
+
     TaskManager taskManager = Managers.getDefault();
 
-    Task task1 = new Task("task1",
-            "descriptionTask1",
-            Status.NEW);
-    Task task2 = new Task("task2",
-            "descriptionTask2",
-            Status.DONE);
+    Task task1 = new Task("task1", "descriptionTask1", Status.NEW);
+    Task task2 = new Task("task2", "descriptionTask2", Status.DONE);
     Epic epic = new Epic("epic1", "description1", new ArrayList<>());
-    Subtask subtaskNew1 = new Subtask("subtaskNew1",
-            "descriptionSubtaskNew1",
-            Status.NEW, epic);
-    Subtask subtaskNew2 = new Subtask("subtaskNew2",
-            "descriptionSubtaskNew2",
-                        Status.NEW, epic);
+    Subtask subtaskNew1 = new Subtask("subtaskNew1", "descriptionSubtaskNew1", Status.NEW, epic);
+    Subtask subtaskNew2 = new Subtask("subtaskNew2", "descriptionSubtaskNew2", Status.NEW, epic);
 
     @Test
     void getTaskList_returnTaskList() {                                                 // a. Со стандартным поведением

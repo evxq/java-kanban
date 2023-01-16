@@ -23,14 +23,14 @@ class EpicTest {
     Subtask subtaskInProgress = new Subtask("subtaskInProgress", "subtaskInProgress", Status.IN_PROGRESS, epic);
 
     @Test
-    public void ShouldBeNewStatusForEmptyEpic() {                                // a. Пустой список подзадач
+    public void getStatus_returnNew_epicIsEmpty() {                                // a. Пустой список подзадач
         taskManager.createEpic(epic);
 
         assertEquals(Status.NEW, epic.getStatus(),"Статус пустого эпика не соответствует");
     }
 
     @Test
-    public void ShouldBeNewStatusForEpicWithNewSubtasks() {                      // b. Все подзадачи со статусом NEW
+    public void getStatus_returnNew_allSubtasksAreNew() {                      // b. Все подзадачи со статусом NEW
         taskManager.createEpic(epic);
         taskManager.createSubtask(subtaskNew1);
         taskManager.createSubtask(subtaskNew2);
@@ -39,7 +39,7 @@ class EpicTest {
     }
 
     @Test
-    public void ShouldBeDoneStatusForEpicWithDoneSubtasks() {                    // c. Все подзадачи со статусом DONE
+    public void getStatus_returnDone_allSubtasksAreDone() {                    // c. Все подзадачи со статусом DONE
         taskManager.createEpic(epic);
         taskManager.createSubtask(subtaskDone1);
         taskManager.createSubtask(subtaskDone2);
@@ -48,7 +48,7 @@ class EpicTest {
     }
 
     @Test
-    public void ShouldBeNewStatusForEpicWithNewAndDoneSubtasks() {               // d. Подзадачи со статусами NEW и DONE
+    public void getStatus_returnNew_subtasksAreNewAndDone() {               // d. Подзадачи со статусами NEW и DONE
         taskManager.createEpic(epic);
         taskManager.createSubtask(subtaskNew1);
         taskManager.createSubtask(subtaskDone1);
@@ -57,7 +57,7 @@ class EpicTest {
     }
 
     @Test
-    public void ShouldBeInProgressStatusForEpicWithInProgressSubtasks() {        // e. Подзадачи со статусом IN_PROGRESS
+    public void getStatus_returnInProgress_subtaskIsInProgress() {        // e. Подзадачи со статусом IN_PROGRESS
         taskManager.createEpic(epic);
         taskManager.createSubtask(subtaskInProgress);
 
@@ -65,7 +65,7 @@ class EpicTest {
     }
 
     @Test
-    public void startTimeAndDurationTest() {
+    public void getStartTimeAndDuration() {
         subtaskNew1.setStartTime(LocalDateTime.now());
         subtaskNew1.setDuration(Duration.ofMinutes(15));
         task1.setStartTime(LocalDateTime.now());

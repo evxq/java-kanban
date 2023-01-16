@@ -5,7 +5,6 @@ import ru.yandex.praktikum.ivanov.kanban.managers.historyManagers.HistoryManager
 import ru.yandex.praktikum.ivanov.kanban.tasks.*;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
@@ -23,15 +22,15 @@ public class InMemoryTaskManager implements TaskManager {
         return historyObject;
     }
 
-    public HashMap<Integer, Task> getTaskMap() {                          // <ТЗ-6>
+    protected HashMap<Integer, Task> getTaskMap() {                          // <ТЗ-6>
         return taskMap;
     }
 
-    public HashMap<Integer, Subtask> getSubtaskMap() {                    // <ТЗ-6>
+    protected HashMap<Integer, Subtask> getSubtaskMap() {                    // <ТЗ-6>
         return subtaskMap;
     }
 
-    public HashMap<Integer, Epic> getEpicMap() {                          // <ТЗ-6>
+    protected HashMap<Integer, Epic> getEpicMap() {                          // <ТЗ-6>
         return epicMap;
     }
 
@@ -90,28 +89,29 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private void checkTasksIntersection(Task task) {                       // <ТЗ-7> проверка пересечения задач
-        if (task.getStartTime() != null) {
-            for (Task anotherTask: getPrioritizedTasks()) {
-                String errorText = task.getName() + " пересекается по времени с " + anotherTask.getName() + ". Задача " + task.getName() + " не может быть создана/изменена";
-                if (anotherTask.getStartTime() != null && anotherTask.getEndTime() != null) {
-                    // если время старта task.getStartTime() одновременно позже времени старта anotherTask.getStartTime() и раньше времени конца anotherTask.getEndTime()
-                    // ---------------  anotherTask
-                    //     >>>>>>>      task
-                    if (task.getStartTime().isAfter(anotherTask.getStartTime()) && task.getStartTime().isBefore(anotherTask.getEndTime())) {
-                        throw new ValidationTaskException(errorText);
-                    }
-                    // если время старта anotherTask.getStartTime() одновременно позже времени старта task.getStartTime() и раньше времени конца task.getEndTime()
-                    //    -------  anotherTask
-                    // >>>>>>      task
-                    else if (anotherTask.getStartTime().isAfter(task.getStartTime()) && anotherTask.getStartTime().isBefore(task.getEndTime())) {
-                        throw new ValidationTaskException(errorText);
-                    }
-                    // если время старта task.getStartTime() одновременно позже времени старта anotherTask.getStartTime() и раньше времени конца anotherTask.getEndTime()
-                    // -------      anotherTask
-                    //    >>>>>>>>  task
-                    else if (task.getStartTime().isAfter(anotherTask.getStartTime()) && task.getStartTime().isBefore(anotherTask.getEndTime())) {
-                        throw new ValidationTaskException(errorText);
-                    }
+        if (task.getStartTime() == null) {
+            return;
+        }
+        for (Task anotherTask: getPrioritizedTasks()) {
+            String errorText = task.getName() + " пересекается по времени с " + anotherTask.getName() + ". Задача " + task.getName() + " не может быть создана/изменена";
+            if (anotherTask.getStartTime() != null && anotherTask.getEndTime() != null) {
+                // если время старта task.getStartTime() одновременно позже времени старта anotherTask.getStartTime() и раньше времени конца anotherTask.getEndTime()
+                // ---------------  anotherTask
+                //     >>>>>>>      task
+                if (task.getStartTime().isAfter(anotherTask.getStartTime()) && task.getStartTime().isBefore(anotherTask.getEndTime())) {
+                    throw new ValidationTaskException(errorText);
+                }
+                // если время старта anotherTask.getStartTime() одновременно позже времени старта task.getStartTime() и раньше времени конца task.getEndTime()
+                //    -------  anotherTask
+                // >>>>>>      task
+                else if (anotherTask.getStartTime().isAfter(task.getStartTime()) && anotherTask.getStartTime().isBefore(task.getEndTime())) {
+                    throw new ValidationTaskException(errorText);
+                }
+                // если время старта task.getStartTime() одновременно позже времени старта anotherTask.getStartTime() и раньше времени конца anotherTask.getEndTime()
+                // -------      anotherTask
+                //    >>>>>>>>  task
+                else if (task.getStartTime().isAfter(anotherTask.getStartTime()) && task.getStartTime().isBefore(anotherTask.getEndTime())) {
+                    throw new ValidationTaskException(errorText);
                 }
             }
         }
@@ -131,7 +131,11 @@ public class InMemoryTaskManager implements TaskManager {
         return null;
     }
 
-    private void checkEpicStartTime(Subtask subtask) {
+     /* изначально (с предыдущих тз) я выстраивал логику, что каждый сабтаск становится полноценной частью эпика
+     только после применения к этому сабтаску метода createSubtask
+     поэтому каждый сабтаск просчитывает свое влияние на эпик отдельно и нет необходимости загружать весь список для расчета Эпика
+     И данный метод используется только в методах создания и апдейта сабтасков */
+    private void calculateEpicStartTime(Subtask subtask) {
         if (subtask.getStartTime() != null &&
                 (subtask.getEpic().getStartTime() == null || subtask.getStartTime().isBefore(subtask.getEpic().getStartTime())) ) {    // <ТЗ-7> проверка и установка startTime Epic'a
             subtask.getEpic().setStartTime(subtask.getStartTime());
@@ -156,7 +160,7 @@ public class InMemoryTaskManager implements TaskManager {
             subtask.getEpic().getEpicTaskList().add(subtask);                 // добавить в соотвествующий список Epic
             subtask.getEpic().checkEpicStatus();                              // проверить статус соответствующего Epic
             subtaskMap.put(id, subtask);                                      // добавить в таблицу Subtask
-            checkEpicStartTime(subtask);
+            calculateEpicStartTime(subtask);
 
             return subtask;
         } catch (ValidationTaskException e) {
@@ -201,7 +205,7 @@ public class InMemoryTaskManager implements TaskManager {
             } else {
                 subtask.getEpic().checkEpicStatus();                          // Когда меняется статус подзадачи в эпике, необходимо проверить статус эпика
                 subtaskMap.put(subtask.getId(), subtask);
-                checkEpicStartTime(subtask);
+                calculateEpicStartTime(subtask);
             }
         } catch (ValidationTaskException e) {
             System.out.println(e.getMessage());
@@ -231,6 +235,7 @@ public class InMemoryTaskManager implements TaskManager {
         subtaskMap.get(id).getEpic().getEpicTaskList().remove(subtaskMap.get(id));      // удаление Subtask из списка Epic
         subtaskMap.remove(id);
         historyObject.remove(id);                                         // <ТЗ-5> удаление Subtask из истории_просмотров
+        subtaskMap.get(id).getEpic().checkEpicStatus();                   // проверить статус соответствующего Epic
     }
 
     @Override
@@ -256,9 +261,6 @@ public class InMemoryTaskManager implements TaskManager {
         return historyObject.getHistory();
     }
 
-    /*В ТЗ явно написано, что список приоритетных задач должен состоять из Тасков и Сабтасков.
-    * Я понял эту логику так: данный список показывает конкретные дела(действия), которые нужно сделать, а сам эпик не является таким делом, так как состоит из других дел (сабтасков)
-    * В общем, я сделал в соответствии с ТЗ  */
     @Override
     public Set<Task> getPrioritizedTasks() {
         Comparator<Task> startTimeComparator = (task1, task2) -> {
