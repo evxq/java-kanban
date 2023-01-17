@@ -1,45 +1,41 @@
-package managersTest.tasksManagersTest;
+package ru.yandex.praktikum.ivanov.kanban.managersTest.tasksManagersTest;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.praktikum.ivanov.kanban.managers.Managers;
 import ru.yandex.praktikum.ivanov.kanban.managers.tasksManagers.TaskManager;
-import ru.yandex.praktikum.ivanov.kanban.tasks.Epic;
-import ru.yandex.praktikum.ivanov.kanban.tasks.Status;
-import ru.yandex.praktikum.ivanov.kanban.tasks.Subtask;
-import ru.yandex.praktikum.ivanov.kanban.tasks.Task;
+import ru.yandex.praktikum.ivanov.kanban.tasks.*;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 abstract class TaskManagerTest<T extends TaskManager> {
 
-    /* Не понял манипуляции с абстрактным методом.
-    Какого вида должен быть этот метод - тестовый или нет? возвращает значение или нет?
-    Как должна происходить инициализация?
-    и зачем он нужен, если в текущей реализации везде обходимся одной строчкой при создании объекта
-    Уже поздно, я плохо понимаю.. */
-
-    TaskManager taskManager = Managers.getDefault();
-
+    T taskManager;
     Task task1 = new Task("task1", "descriptionTask1", Status.NEW);
     Task task2 = new Task("task2", "descriptionTask2", Status.DONE);
     Epic epic = new Epic("epic1", "description1", new ArrayList<>());
     Subtask subtaskNew1 = new Subtask("subtaskNew1", "descriptionSubtaskNew1", Status.NEW, epic);
     Subtask subtaskNew2 = new Subtask("subtaskNew2", "descriptionSubtaskNew2", Status.NEW, epic);
 
+    abstract void createManager();
+
     @Test
     void getTaskList_returnTaskList() {                                                 // a. Со стандартным поведением
         taskManager.createTask(task1);
         taskManager.createTask(task2);
 
-        assertEquals(2, taskManager.getTaskList().size(), "не соответствует");
+        assertEquals(2, taskManager.getTaskList().size());
     }
 
     @Test
     void getTaskList_returnTaskList_listIsEmpty() {                                     // b. С пустым списком задач
-        assertEquals(0, taskManager.getTaskList().size(), "не соответствует");
+        assertEquals(0, taskManager.getTaskList().size());
     }
 
     @Test
@@ -47,24 +43,24 @@ abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.createSubtask(subtaskNew1);
         taskManager.createSubtask(subtaskNew2);
 
-        assertEquals(2, taskManager.getSubtaskList().size(), "не соответствует");
+        assertEquals(2, taskManager.getSubtaskList().size());
     }
 
     @Test
     void getSubtaskList_returnSubtaskList_listIsEmpty() {                               // b. С пустым списком задач
-        assertEquals(0, taskManager.getSubtaskList().size(), "не соответствует");
+        assertEquals(0, taskManager.getSubtaskList().size());
     }
 
     @Test
     void getEpicList_returnEpicList() {                                                 // a. Со стандартным поведением.
         taskManager.createEpic(epic);
 
-        assertEquals(1, taskManager.getEpicList().size(), "не соответствует");
+        assertEquals(1, taskManager.getEpicList().size());
     }
 
     @Test
     void getEpicList_returnEpicList_listIsEmpty() {                                     // b. С пустым списком задач.
-        assertEquals(0, taskManager.getEpicList().size(), "не соответствует");
+        assertEquals(0, taskManager.getEpicList().size());
     }
 
     @Test
@@ -73,14 +69,14 @@ abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.createTask(task2);
         taskManager.deleteAllTasks();
 
-        assertEquals(0, taskManager.getTaskList().size(), "не соответствует");
+        assertEquals(0, taskManager.getTaskList().size());
     }
 
     @Test
     void deleteAllTasks_taskListIsEmpty() {                                             // b. С пустым списком задач.
         taskManager.deleteAllTasks();
 
-        assertEquals(0, taskManager.getTaskList().size(), "не соответствует");
+        assertEquals(0, taskManager.getTaskList().size());
     }
 
     @Test
@@ -89,14 +85,14 @@ abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.createSubtask(subtaskNew2);
         taskManager.deleteAllSubtasks();
 
-        assertEquals(0, taskManager.getSubtaskList().size(), "не соответствует");
+        assertEquals(0, taskManager.getSubtaskList().size());
     }
 
     @Test
     void deleteAllSubtasks_subtaskListIsEmpty() {                                       // b. С пустым списком задач
         taskManager.deleteAllSubtasks();
 
-        assertEquals(0, taskManager.getSubtaskList().size(), "не соответствует");
+        assertEquals(0, taskManager.getSubtaskList().size());
     }
 
     @Test
@@ -104,14 +100,14 @@ abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.createEpic(epic);
         taskManager.deleteAllEpics();
 
-        assertEquals(0, taskManager.getEpicList().size(), "не соответствует");
+        assertEquals(0, taskManager.getEpicList().size());
     }
 
     @Test
     void deleteAllEpics_epicListIsEmpty() {                                             // b. С пустым списком задач
         taskManager.deleteAllEpics();
 
-        assertEquals(0, taskManager.getEpicList().size(), "не соответствует");
+        assertEquals(0, taskManager.getEpicList().size());
     }
 
     @Test
@@ -310,5 +306,22 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
         assertNotNull(taskManager.getHistory(), "история пустая");
         assertEquals(1, taskManager.getHistory().size(), "история не соответствует");
+    }
+
+    @Test
+    void getPrioritizedTasks_returnSet() {
+        task1.setStartTime(LocalDateTime.now());
+        task1.setDuration(Duration.ofMinutes(15));
+        taskManager.createTask(task1);
+        subtaskNew1.setStartTime(LocalDateTime.now().plus(Duration.ofMinutes(30)));
+        subtaskNew1.setDuration(Duration.ofMinutes(15));
+        taskManager.createEpic(epic);
+        taskManager.createSubtask(subtaskNew1);
+        Set<Task> set = taskManager.getPrioritizedTasks();
+
+        assertNotNull(set, "список приоритетов пуст");
+        assertEquals(2, set.size(), "размер списка приоритетов не соответствует");
+        assertEquals(task1, set.toArray()[0], "неправильный порядок задач");
+        assertEquals(subtaskNew1, set.toArray()[1], "неправильный порядок задач");
     }
 }

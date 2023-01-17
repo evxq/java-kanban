@@ -1,4 +1,4 @@
-package managersTest.historyManagersTest;
+package ru.yandex.praktikum.ivanov.kanban.managersTest.historyManagersTest;
 
 import org.junit.jupiter.api.Test;
 import ru.yandex.praktikum.ivanov.kanban.managers.Managers;
@@ -14,20 +14,14 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class HistoryManagerTest {
-
-    /* В текущей логике приложения тест истории без ТаскМенеджера не получится,
-    так как методы HistoryManager (add и remove) работают через Id Тасков,
-    который в свою очередь рассчитывается только в методе createTask класса TaskManager */
-
     HistoryManager historyManager = new InMemoryHistoryManager();
-    TaskManager taskManager = Managers.getDefault();
     Task task1 = new Task("task1","descriptionTask1", Status.NEW);
     Task task2 = new Task("task2", "descriptionTask2", Status.DONE);
     Task task3 = new Task("task3", "descriptionTask3", Status.IN_PROGRESS);
 
     @Test
     void addToHistory_getHistory_returnHistory() {
-        taskManager.createTask(task1);
+        task1.setId(1);
         historyManager.add(task1);
         List<Task> history = historyManager.getHistory();
 
@@ -37,8 +31,8 @@ class HistoryManagerTest {
 
     @Test
     void getHistory_returnHistoryInOrderOfAdding() {
-        taskManager.createTask(task1);
-        taskManager.createTask(task2);
+        task1.setId(1);
+        task2.setId(2);
         historyManager.add(task1);
         historyManager.add(task2);
         historyManager.add(task1);          // дубликат для проверки перезаписи истории
@@ -50,27 +44,24 @@ class HistoryManagerTest {
 
     @Test
     void removeFirst() {
-        taskManager.createTask(task1);
-        taskManager.createTask(task2);
-        taskManager.createTask(task3);
+        task1.setId(1);
+        task2.setId(2);
+        task3.setId(3);
         historyManager.add(task1);
         historyManager.add(task2);
         historyManager.add(task3);
         historyManager.remove(task1.getId());
         List<Task> history = historyManager.getHistory();
 
-        // Так как задачи неразрывно связаны с Id,
-        // то в данных тестах на наличие задачи в списке
-        // достаточно проверить только Id
         assertNotEquals(task1.getId(), history.get(0).getId());
         assertNotEquals(task1.getId(), history.get(1).getId());
     }
 
     @Test
     void removeMiddle() {
-        taskManager.createTask(task1);
-        taskManager.createTask(task2);
-        taskManager.createTask(task3);
+        task1.setId(1);
+        task2.setId(2);
+        task3.setId(3);
         historyManager.add(task1);
         historyManager.add(task2);
         historyManager.add(task3);
@@ -83,9 +74,9 @@ class HistoryManagerTest {
 
     @Test
     void removeLast() {
-        taskManager.createTask(task1);
-        taskManager.createTask(task2);
-        taskManager.createTask(task3);
+        task1.setId(1);
+        task2.setId(2);
+        task3.setId(3);
         historyManager.add(task1);
         historyManager.add(task2);
         historyManager.add(task3);

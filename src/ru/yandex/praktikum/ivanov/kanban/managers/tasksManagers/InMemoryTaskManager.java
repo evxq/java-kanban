@@ -95,19 +95,16 @@ public class InMemoryTaskManager implements TaskManager {
         for (Task anotherTask: getPrioritizedTasks()) {
             String errorText = task.getName() + " пересекается по времени с " + anotherTask.getName() + ". Задача " + task.getName() + " не может быть создана/изменена";
             if (anotherTask.getStartTime() != null && anotherTask.getEndTime() != null) {
-                // если время старта task.getStartTime() одновременно позже времени старта anotherTask.getStartTime() и раньше времени конца anotherTask.getEndTime()
                 // ---------------  anotherTask
                 //     >>>>>>>      task
                 if (task.getStartTime().isAfter(anotherTask.getStartTime()) && task.getStartTime().isBefore(anotherTask.getEndTime())) {
                     throw new ValidationTaskException(errorText);
                 }
-                // если время старта anotherTask.getStartTime() одновременно позже времени старта task.getStartTime() и раньше времени конца task.getEndTime()
                 //    -------  anotherTask
                 // >>>>>>      task
                 else if (anotherTask.getStartTime().isAfter(task.getStartTime()) && anotherTask.getStartTime().isBefore(task.getEndTime())) {
                     throw new ValidationTaskException(errorText);
                 }
-                // если время старта task.getStartTime() одновременно позже времени старта anotherTask.getStartTime() и раньше времени конца anotherTask.getEndTime()
                 // -------      anotherTask
                 //    >>>>>>>>  task
                 else if (task.getStartTime().isAfter(anotherTask.getStartTime()) && task.getStartTime().isBefore(anotherTask.getEndTime())) {
@@ -131,10 +128,6 @@ public class InMemoryTaskManager implements TaskManager {
         return null;
     }
 
-     /* изначально (с предыдущих тз) я выстраивал логику, что каждый сабтаск становится полноценной частью эпика
-     только после применения к этому сабтаску метода createSubtask
-     поэтому каждый сабтаск просчитывает свое влияние на эпик отдельно и нет необходимости загружать весь список для расчета Эпика
-     И данный метод используется только в методах создания и апдейта сабтасков */
     private void calculateEpicStartTime(Subtask subtask) {
         if (subtask.getStartTime() != null &&
                 (subtask.getEpic().getStartTime() == null || subtask.getStartTime().isBefore(subtask.getEpic().getStartTime())) ) {    // <ТЗ-7> проверка и установка startTime Epic'a
@@ -232,10 +225,11 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void deleteSubtask(int id) {                                   // 2.6 Удаление Subtask по идентификатору
+        int epicId = subtaskMap.get(id).getEpic().getId();
         subtaskMap.get(id).getEpic().getEpicTaskList().remove(subtaskMap.get(id));      // удаление Subtask из списка Epic
         subtaskMap.remove(id);
         historyObject.remove(id);                                         // <ТЗ-5> удаление Subtask из истории_просмотров
-        subtaskMap.get(id).getEpic().checkEpicStatus();                   // проверить статус соответствующего Epic
+        epicMap.get(epicId).checkEpicStatus();                   // проверить статус соответствующего Epic
     }
 
     @Override

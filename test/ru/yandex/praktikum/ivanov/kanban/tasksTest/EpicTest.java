@@ -1,4 +1,4 @@
-package tasksTest;
+package ru.yandex.praktikum.ivanov.kanban.tasksTest;
 
 import org.junit.jupiter.api.Test;
 import ru.yandex.praktikum.ivanov.kanban.managers.Managers;
