@@ -2,9 +2,11 @@ package ru.yandex.praktikum.ivanov.kanban.tasksTest;
 
 import org.junit.jupiter.api.Test;
 import ru.yandex.praktikum.ivanov.kanban.managers.Managers;
+import ru.yandex.praktikum.ivanov.kanban.managers.tasksManagers.InMemoryTaskManager;
 import ru.yandex.praktikum.ivanov.kanban.managers.tasksManagers.TaskManager;
 import ru.yandex.praktikum.ivanov.kanban.tasks.*;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -12,7 +14,7 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 
 class EpicTest {
-    TaskManager taskManager = Managers.getDefault();
+    TaskManager taskManager = new InMemoryTaskManager();
 
     Task task1 = new Task("task1","descriptionTask1", Status.NEW);
     Epic epic = new Epic("epic1", "description1", new ArrayList<>());
@@ -21,6 +23,9 @@ class EpicTest {
     Subtask subtaskDone1 = new Subtask("subtaskDone1", "descriptionSubtaskDone1", Status.DONE, epic);
     Subtask subtaskDone2 = new Subtask("subtaskDone2", "descriptionSubtaskDone2", Status.DONE, epic);
     Subtask subtaskInProgress = new Subtask("subtaskInProgress", "subtaskInProgress", Status.IN_PROGRESS, epic);
+
+    EpicTest() {
+    }
 
     @Test
     public void getStatus_returnNew_epicIsEmpty() {                                // a. Пустой список подзадач

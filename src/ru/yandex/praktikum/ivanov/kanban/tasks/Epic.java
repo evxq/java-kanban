@@ -6,6 +6,8 @@ import java.util.ArrayList;
 public class Epic extends Task {
     private final ArrayList<Subtask> epicTaskList;
     private LocalDateTime endTime;
+    private ArrayList<Integer> epicIDTaskList = new ArrayList<>();
+    public String epicType;
 
     public Epic(String name, String description, ArrayList<Subtask> epicTaskList) {
         super(name, description);
@@ -14,6 +16,14 @@ public class Epic extends Task {
 
     public ArrayList<Subtask> getEpicTaskList() {
         return epicTaskList;
+    }
+
+    public ArrayList<Integer> getEpicIDTaskList() {
+        return epicIDTaskList;
+    }
+
+    public void SetSubtaskToEpic(Subtask subtask) {
+        epicTaskList.add(subtask);
     }
 
     public void checkEpicStatus() {

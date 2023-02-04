@@ -7,12 +7,14 @@ import java.io.*;
 import java.util.*;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
-    private final File fileToSave;
+    private File fileToSave = null;
 
-    private FileBackedTaskManager(File file) {
+    protected FileBackedTaskManager(File file) {
         super();
         this.fileToSave = file;
     }
+
+    protected FileBackedTaskManager() {}
 
     public static FileBackedTaskManager getDefaultFile(File file) {
         return new FileBackedTaskManager(file);
@@ -38,7 +40,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         return historyList;
     }
 
-    private void save() {                                                     // СОХРАНЕНИЕ В ФАЙЛ
+    protected void save() {                                                     // СОХРАНЕНИЕ В ФАЙЛ
         try (FileWriter writer = new FileWriter(fileToSave)) {
             writer.write("id,type,name,status,description,duration,startTime,epic\n");
             for (Task task: super.getTaskList()) {
@@ -177,18 +179,27 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     @Override
     public void deleteTask(int id) {
+        if (getTaskMap().get(id) == null) {
+            throw new NullPointerException();
+        }
         super.deleteTask(id);
         save();
     }
 
     @Override
     public void deleteSubtask(int id) {
+        if (getSubtaskMap().get(id) == null) {
+            throw new NullPointerException();
+        }
         super.deleteSubtask(id);
         save();
     }
 
     @Override
     public void deleteEpic(int id) {
+        if (getEpicMap().get(id) == null) {
+            throw new NullPointerException();
+        }
         super.deleteEpic(id);
         save();
     }

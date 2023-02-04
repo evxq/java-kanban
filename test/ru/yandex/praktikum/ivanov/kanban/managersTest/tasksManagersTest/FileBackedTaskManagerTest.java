@@ -21,7 +21,7 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
 
     @BeforeEach
     @Override
-    void createManager() {
+    protected void createManager() {
         taskManager = FileBackedTaskManager.getDefaultFile(file);
     }
 

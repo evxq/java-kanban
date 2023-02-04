@@ -4,10 +4,13 @@ import org.junit.jupiter.api.BeforeEach;
 import ru.yandex.praktikum.ivanov.kanban.managers.Managers;
 import ru.yandex.praktikum.ivanov.kanban.managers.tasksManagers.InMemoryTaskManager;
 
+import java.io.IOException;
+
 public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
     @BeforeEach
     @Override
-    void createManager() {
-        taskManager = (InMemoryTaskManager) Managers.getDefault();
+    protected void createManager() throws IOException, InterruptedException {
+        taskManager = new InMemoryTaskManager();
+
     }
 }

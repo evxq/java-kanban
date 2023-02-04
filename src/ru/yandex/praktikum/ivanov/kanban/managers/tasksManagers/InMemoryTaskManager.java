@@ -84,8 +84,11 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Epic getEpicById(int id) {                                     // 2.3 Получение Epic по идентификатору
-        historyObject.add(epicMap.get(id));
-        return epicMap.get(id);
+        if (epicMap.get(id) != null) {
+            historyObject.add(epicMap.get(id));
+            return epicMap.get(id);
+        }
+        return null;
     }
 
     private void checkTasksIntersection(Task task) {                       // <ТЗ-7> проверка пересечения задач
@@ -150,7 +153,15 @@ public class InMemoryTaskManager implements TaskManager {
             checkTasksIntersection(subtask);
             id++;
             subtask.setId(id);
+            if (subtask.getEpic().getId() == null) {
+                for (Epic epic : epicMap.values()) {
+                    if (epic.getName().equals(subtask.getEpic().getName())) {
+                        subtask.setEpic(epic);
+                    }
+                }
+            }
             subtask.getEpic().getEpicTaskList().add(subtask);                 // добавить в соотвествующий список Epic
+            subtask.setSubtasksEpicId(subtask.getEpic().getId());             //
             subtask.getEpic().checkEpicStatus();                              // проверить статус соответствующего Epic
             subtaskMap.put(id, subtask);                                      // добавить в таблицу Subtask
             calculateEpicStartTime(subtask);
@@ -225,11 +236,17 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void deleteSubtask(int id) {                                   // 2.6 Удаление Subtask по идентификатору
-        int epicId = subtaskMap.get(id).getEpic().getId();
-        subtaskMap.get(id).getEpic().getEpicTaskList().remove(subtaskMap.get(id));      // удаление Subtask из списка Epic
+        int epicId = subtaskMap.get(id).getSubtasksEpicId();
+        if (!epicMap.isEmpty()) {
+            epicMap.get(epicId).getEpicTaskList().remove(subtaskMap.get(id));               // удаление Subtask из списка Epic
+            epicMap.get(epicId).checkEpicStatus();                                          // проверить статус соответствующего Epic
+        }
         subtaskMap.remove(id);
         historyObject.remove(id);                                         // <ТЗ-5> удаление Subtask из истории_просмотров
-        epicMap.get(epicId).checkEpicStatus();                   // проверить статус соответствующего Epic
+        /*if (!epicMap.isEmpty()) {
+            epicMap.get(epicId).getEpicTaskList().remove(subtaskMap.get(id));               // удаление Subtask из списка Epic
+            epicMap.get(epicId).checkEpicStatus();                                          // проверить статус соответствующего Epic
+        }*/
     }
 
     @Override
@@ -238,15 +255,27 @@ public class InMemoryTaskManager implements TaskManager {
         for (Subtask subtask : epicMap.get(id).getEpicTaskList()) {
             historyObject.remove(subtask.getId());                        // <ТЗ-5> удаление всех подзадач Epic'а из истории_просмотров
         }
-
         for (Subtask subtask : epicMap.get(id).getEpicTaskList()) {       // удаление всех Subtask данного Epic
             subtaskMap.remove(subtask.getId());
+        }
+        for (Subtask subtask: subtaskMap.values()) {                      // удаление сабтаска по упоминаню id эпика
+            if (subtask.getSubtasksEpicId() == id) {
+                subtaskMap.remove(subtask.getId());
+            }
         }
         epicMap.remove(id);
     }
 
     @Override
     public ArrayList<Subtask> getEpicSubtasks(int id) {                   // 3.1 Получение списка всех подзадач определённого эпика
+        if (!epicMap.containsKey(id)) {
+            return null;
+        }
+        if (epicMap.get(id).getEpicTaskList().isEmpty()) {                        // добавление сабтасков в эпик по его списку id сабтасков
+            for (Integer i: epicMap.get(id).getEpicIDTaskList()) {
+                epicMap.get(id).getEpicTaskList().add(subtaskMap.get(i));
+            }
+        }
         return epicMap.get(id).getEpicTaskList();
     }
 

@@ -1,9 +1,9 @@
 package ru.yandex.praktikum.ivanov.kanban.tasks;
 
-import java.time.LocalDateTime;
-
 public class Subtask extends Task {
     private Epic epic;
+    public String subtaskType;
+    private int epicId;
 
     public Subtask(String name, String description, Status status, Epic epic) {
         super(name, description, status);
@@ -14,10 +14,22 @@ public class Subtask extends Task {
         return epic;
     }
 
+    public void setEpic(Epic epic) {
+        this.epic = epic;
+    }
+
+    public void setSubtasksEpicId(int epicId) {
+        this.epicId = epicId;
+    }
+
+    public int getSubtasksEpicId() {
+        return epicId;
+    }
+
     @Override
     public String toString() {
         return "Subtask{" +
-                "epic=" + epic.getName() + '\'' +
+                "epicID='" + epicId + '\'' +
                 ", name='" + this.getName() + '\'' +
                 ", description='" + this.getDescription() + '\'' +
                 ", id=" + this.getId() +

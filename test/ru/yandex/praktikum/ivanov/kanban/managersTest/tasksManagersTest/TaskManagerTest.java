@@ -6,6 +6,7 @@ import ru.yandex.praktikum.ivanov.kanban.managers.Managers;
 import ru.yandex.praktikum.ivanov.kanban.managers.tasksManagers.TaskManager;
 import ru.yandex.praktikum.ivanov.kanban.tasks.*;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -14,16 +15,16 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-abstract class TaskManagerTest<T extends TaskManager> {
+public abstract class TaskManagerTest<T extends TaskManager> {
 
-    T taskManager;
+    protected T taskManager;
     Task task1 = new Task("task1", "descriptionTask1", Status.NEW);
     Task task2 = new Task("task2", "descriptionTask2", Status.DONE);
     Epic epic = new Epic("epic1", "description1", new ArrayList<>());
     Subtask subtaskNew1 = new Subtask("subtaskNew1", "descriptionSubtaskNew1", Status.NEW, epic);
     Subtask subtaskNew2 = new Subtask("subtaskNew2", "descriptionSubtaskNew2", Status.NEW, epic);
 
-    abstract void createManager();
+    abstract protected void createManager() throws IOException, InterruptedException;
 
     @Test
     void getTaskList_returnTaskList() {                                                 // a. Со стандартным поведением
@@ -40,6 +41,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void getSubtaskList_returnSubtaskList() {                                           // a. Со стандартным поведением
+        taskManager.createEpic(epic);
         taskManager.createSubtask(subtaskNew1);
         taskManager.createSubtask(subtaskNew2);
 
@@ -81,6 +83,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void deleteAllSubtasks() {                                                          // a. Со стандартным поведением
+        taskManager.createEpic(epic);
         taskManager.createSubtask(subtaskNew1);
         taskManager.createSubtask(subtaskNew2);
         taskManager.deleteAllSubtasks();
@@ -133,6 +136,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void getSubtaskById_returnSubtask() {                                               // a. Со стандартным поведением
+        taskManager.createEpic(epic);
         taskManager.createSubtask(subtaskNew1);
         int taskId = subtaskNew1.getId();
 
@@ -162,11 +166,8 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void getEpicById_returnExp_idIsWrong() {                                            // c. С неверным идентификатором задачи
-        NullPointerException wrongId = assertThrows(
-                NullPointerException.class,
-                () -> taskManager.getEpicById(-1)
-        );
-        assertNull(wrongId.getMessage());
+        Epic epic = taskManager.getEpicById(-1);
+        assertNull(epic);
 
         Integer n = null;
         NullPointerException nullId = assertThrows(
@@ -194,6 +195,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void createSubtask_returnSubtaskAndSubtaskList() {
+        taskManager.createEpic(epic);
         taskManager.createSubtask(subtaskNew1);
         int taskId = subtaskNew1.getId();
         Subtask savedSubtask = taskManager.getSubtaskById(taskId);
@@ -278,11 +280,15 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void deleteEpic_fromEpicListAndHistory() {
+    void deleteEpic_fromEpicList_fromSubtaskList_fromHistory() {
         taskManager.createEpic(epic);
         taskManager.createSubtask(subtaskNew1);
         taskManager.getEpicById(epic.getId());
         taskManager.deleteEpic(epic.getId());
+
+        System.out.println(taskManager.getEpicList());
+        System.out.println(taskManager.getSubtaskList());
+        System.out.println(taskManager.getHistory());
 
         assertEquals(0 ,taskManager.getEpicList().size(), "задача не удалилась");
         assertEquals(0 ,taskManager.getSubtaskList().size(), "подзадача не удалилась");
