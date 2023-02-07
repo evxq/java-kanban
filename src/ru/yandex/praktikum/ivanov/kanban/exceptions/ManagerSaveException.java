@@ -1,4 +1,4 @@
-package ru.yandex.praktikum.ivanov.kanban.managers.tasksManagers;
+package ru.yandex.praktikum.ivanov.kanban.exceptions;
 
 public class ManagerSaveException extends RuntimeException {
     public ManagerSaveException(final String message) {

@@ -5,62 +5,35 @@ import ru.yandex.praktikum.ivanov.kanban.server.KVTaskClient;
 import ru.yandex.praktikum.ivanov.kanban.tasks.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class HttpTaskManager extends FileBackedTaskManager {
-    private KVTaskClient client;
+    private final KVTaskClient client;
+    private final static String KEY_TASKS = "tasks";
+    private final static String KEY_EPICS = "epics";
+    private final static String KEY_SUBTASKS = "subtasks";
+    private final static String KEY_HISTORY = "history";
 
     public HttpTaskManager(String url) throws IOException, InterruptedException {
         client = new KVTaskClient(url);
-    }
-
-    public String getToken() {
-        return client.API_TOKEN;
     }
 
     @Override
     protected void save() {
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.serializeNulls();
-        Gson gsonTask = gsonBuilder.create();
+        Gson gsonPlus = gsonBuilder.create();
 
-        ArrayList<String> managerList = new ArrayList<>();
-        Gson gson = new Gson();
         try {
-            for (Task task : getTaskList()) {
-                String jsonTask = gsonTask.toJson(task);
-                managerList.add(jsonTask);
-            }
-
-            for (Epic epic : getEpicList()) {
-                if (epic.getEpicTaskList().isEmpty()) {
-                    String jsonEpic = gsonTask.toJson(epic);
-                    managerList.add(jsonEpic);
-                } else {
-                    for (Subtask subtask: epic.getEpicTaskList()) {
-                        epic.getEpicIDTaskList().add(subtask.getId());
-                    }
-                    epic.getEpicTaskList().clear();
-                    String jsonEpic = gsonTask.toJson(epic);
-                    managerList.add(jsonEpic);
+            client.put(KEY_TASKS, gsonPlus.toJson(getTaskList()));
+            for (Epic epic: getEpicList()) {
+                for (Subtask subtask: epic.getEpicTaskList()) {
+                    epic.getEpicIDTaskList().add(subtask.getId());
                 }
+                epic.getEpicTaskList().clear();
             }
-
-            for (Subtask subtask : getSubtaskList()) {
-                subtask.setEpic(null);
-                String jsonSubtask = gsonTask.toJson(subtask);
-                managerList.add(jsonSubtask);
-            }
-
-            ArrayList<Integer> historyList = new ArrayList<>();
-            for (Task task: getHistoryObject().getHistory()) {
-                historyList.add(task.getId());
-            }
-            String jsonHistory = gsonTask.toJson("customList:" + historyList);
-
-            managerList.add(jsonHistory);
-            String jsonManager = gson.toJson(managerList);
-            client.put(client.API_TOKEN, jsonManager);
+            client.put(KEY_EPICS, gsonPlus.toJson(getEpicList()));
+            client.put(KEY_SUBTASKS, gsonPlus.toJson(getSubtaskList()));
+            client.put(KEY_HISTORY, gsonPlus.toJson(getHistoryObject().getHistory()));
 
         } catch (IOException | InterruptedException e) {
             System.out.println("Ошибка сохранения на сервер");
@@ -68,43 +41,43 @@ public class HttpTaskManager extends FileBackedTaskManager {
     }
 
     public void load() {
-        String input = client.load(client.API_TOKEN);
-        String[] dividedJson = input.split("\",\"\"customList:");
-
         Gson gson = new Gson();
-        String taskArray = dividedJson[0] + "]";
-        JsonElement jsonElement = JsonParser.parseString(taskArray);
-        JsonArray jsonArray = jsonElement.getAsJsonArray();
 
-        for (int i = 0; i < jsonArray.size(); i++) {
-            if (jsonArray.get(i).toString().contains("subtaskType")) {
-                Subtask subtask = gson.fromJson(jsonArray.get(i), Subtask.class);
-                int epicId = subtask.getSubtasksEpicId();
-                subtask.setEpic(getEpicMap().get(epicId));                      // вызов эпика из мапы по Id
-                getSubtaskMap().put(subtask.getId(), subtask);
-                subtask.getEpic().getEpicTaskList().add(subtask);               // взять эпик и добавить в него сабтаск
-            }
-            else if (jsonArray.get(i).toString().contains("epicType")) {
-                Epic epic = gson.fromJson(jsonArray.get(i), Epic.class);
-                getEpicMap().put(epic.getId(), epic);
-            }
-            else {
-                Task task = gson.fromJson(jsonArray.get(i), Task.class);
-                getTaskMap().put(task.getId(), task);
-            }
+        JsonArray jsonTasksArray = JsonParser.parseString(client.load(KEY_TASKS)).getAsJsonArray();
+        for (int i = 0; i < jsonTasksArray.size(); i++) {
+            Task task = gson.fromJson(jsonTasksArray.get(i), Task.class);
+            getTaskMap().put(task.getId(), task);
         }
 
-        for (char historyId: dividedJson[1].toCharArray()) {
+        JsonArray jsonEpicsArray = JsonParser.parseString(client.load(KEY_EPICS)).getAsJsonArray();
+        for (int i = 0; i < jsonEpicsArray.size(); i++) {
+            Epic epic = gson.fromJson(jsonEpicsArray.get(i), Epic.class);
+            getEpicMap().put(epic.getId(), epic);
+        }
+
+        JsonArray jsonSubtasksArray = JsonParser.parseString(client.load(KEY_SUBTASKS)).getAsJsonArray();
+        for (int i = 0; i < jsonSubtasksArray.size(); i++) {
+            Subtask subtask = gson.fromJson(jsonSubtasksArray.get(i), Subtask.class);
+            int epicId = subtask.getSubtasksEpicId();
+            subtask.setEpic(getEpicMap().get(epicId));
+            getSubtaskMap().put(subtask.getId(), subtask);
+            subtask.getEpic().getEpicTaskList().add(subtask);
+        }
+
+        JsonArray jsonHistoryArray = JsonParser.parseString(client.load(KEY_HISTORY)).getAsJsonArray();
+        for (int i = 0; i < jsonHistoryArray.size(); i++) {
             try {
-                int i = Integer.parseInt(String.valueOf(historyId));
-                if (getTaskMap().containsKey(i)) {
-                    getHistoryObject().add(getTaskMap().get(i));
-                } else if (getEpicMap().containsKey(i)) {
-                    getHistoryObject().add(getEpicMap().get(i));
-                } else if (getSubtaskMap().containsKey(i)) {
-                    getHistoryObject().add(getSubtaskMap().get(i));
+                int historyId = Integer.parseInt(String.valueOf(jsonHistoryArray.get(i)));
+                if (getTaskMap().containsKey(historyId)) {
+                    getHistoryObject().add(getTaskMap().get(historyId));
+                } else if (getEpicMap().containsKey(historyId)) {
+                    getHistoryObject().add(getEpicMap().get(historyId));
+                } else if (getSubtaskMap().containsKey(historyId)) {
+                    getHistoryObject().add(getSubtaskMap().get(historyId));
                 }
-            } catch (NumberFormatException e) {}
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
         }
     }
 

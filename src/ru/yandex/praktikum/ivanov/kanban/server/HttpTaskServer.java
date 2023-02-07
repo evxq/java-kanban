@@ -9,23 +9,13 @@ import java.io.*;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 import com.google.gson.Gson;
 import ru.yandex.praktikum.ivanov.kanban.managers.Managers;
 import ru.yandex.praktikum.ivanov.kanban.managers.tasksManagers.TaskManager;
 import ru.yandex.praktikum.ivanov.kanban.tasks.*;
 
-
-/* Привет. Этот ТЗ дался мне очень тяжело.
-Сначала были проблемы с пониманием теории, а когда с этим разобрался, посыпались проблемы с сериализацией и десериализацией.
-Думаю, причина этого в переусложненной архитектуре, которую я выбрал изначально. Можно было проще.
-В итоге все удалось решить, все тесты работают, но на это ушло много-много часов ежедневного труда и все свободное время.
-Поэтому отправляю ТЗ только в предпоследний день :(
-В связи с этим просьба, если нет критических проблем, то прими, пожалуйста, ТЗ до конца воскресенья, чтобы я успел закончить спринт вовремя и начать следующий модуль.
-Мне очень очень нужно продолжить обучение дальше.
-Какие-то недостатки можно будет исправить в следующем ТЗ.
-Надеюсь на твое понимание.
- */
 
 public class HttpTaskServer {
 
@@ -36,7 +26,7 @@ public class HttpTaskServer {
 
     public HttpTaskServer() throws IOException, InterruptedException {
         server = HttpServer.create(new InetSocketAddress("localhost", PORT), 0);
-        server.createContext("/tasks", new FileHandler());
+        server.createContext("/tasks", new RequestHandler());
         httpManager = Managers.getDefault();
     }
 
@@ -48,11 +38,11 @@ public class HttpTaskServer {
         server.stop(i);
     }
 
-    class FileHandler implements HttpHandler {
+    class RequestHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             String path = exchange.getRequestURI().toString();
-System.out.println(path);
+            System.out.println(path);
             String requestMethod = exchange.getRequestMethod();
 
             switch (requestMethod) {
@@ -135,35 +125,50 @@ System.out.println(path);
                 InputStream stream = exchange.getRequestBody();
                 String jsonBody = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
 
-                if (path.contains("/tasks/epic/")) {                                            // POST /tasks/task/ Body: {..}
+                if (Pattern.matches("/tasks/epic/\\d+", path)) {
                     Epic epic = gson.fromJson(jsonBody, Epic.class);
-                    if (epic.getId() != null) {
+                    httpManager.updateEpic(epic);
+                    writeResponse(exchange,"Обновлен Epic id=" + epic.getId(), 200);
+                }
+                else if (path.contains("/tasks/epic/")) {                                            // POST /tasks/task/ Body: {..}
+                    Epic epic = gson.fromJson(jsonBody, Epic.class);
+                    /*if (epic.getId() != null) {
                         httpManager.updateEpic(epic);
                         writeResponse(exchange,"Обновлен Epic id=" + epic.getId(), 200);
-                    } else {
+                    } else {*/
                         Epic newEpic = httpManager.createEpic(epic);
                         writeResponse(exchange,"Создан Epic id=" + newEpic.getId(), 200);
-                    }
+//                    }
+                }
+                else if (Pattern.matches("/tasks/subtask/\\d+", path)) {
+                    Subtask subtask = gson.fromJson(jsonBody, Subtask.class);
+                    httpManager.updateSubtask(subtask);
+                    writeResponse(exchange,"Обновлен Subtask id=" + subtask.getId(), 200);
                 }
                 else if (path.contains("/tasks/subtask/")) {                                       // POST /tasks/task/ Body: {..}
                     Subtask subtask = gson.fromJson(jsonBody, Subtask.class);
-                    if (subtask.getId() != null) {
+                    /*if (subtask.getId() != null) {
                         httpManager.updateSubtask(subtask);
                         writeResponse(exchange,"Обновлен Subtask id=" + subtask.getId(), 200);
-                    } else {
+                    } else {*/
                         Subtask newSubtask = httpManager.createSubtask(subtask);
                         writeResponse(exchange,"Создан Subtask id=" + newSubtask.getId(), 200);
-                    }
+//                    }
+                }
+                else if (Pattern.matches("/tasks/task/\\d+", path)) {
+                    Task task = gson.fromJson(jsonBody, Task.class);
+                    httpManager.updateTask(task);
+                    writeResponse(exchange,"Обновлен Task id=" + task.getId(), 200);
                 }
                 else if (path.contains("/tasks/task/")) {                                       // POST /tasks/task/ Body: {..}
                     Task task = gson.fromJson(jsonBody, Task.class);
-                    if (task.getId() != null) {
+                    /*if (task.getId() != null) {
                         httpManager.updateTask(task);
                         writeResponse(exchange,"Обновлен Task id=" + task.getId(), 200);
-                    } else {
+                    } else {*/
                         Task newTask = httpManager.createTask(task);
                         writeResponse(exchange,"Создан Task id=" + newTask.getId(), 200);
-                    }
+//                    }
                 }
                 else {
                     writeResponse(exchange,"Путь не соответствует шаблону", 400);
@@ -235,6 +240,7 @@ System.out.println(path);
                                 }
                             }
                         }
+                        sub.setEpic(null);
                     }
                     ArrayList<Subtask> subtasksArray = httpManager.getEpicSubtasks(id);
                     if (subtasksArray == null) {

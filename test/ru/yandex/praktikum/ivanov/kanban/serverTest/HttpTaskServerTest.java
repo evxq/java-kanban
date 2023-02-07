@@ -27,7 +27,6 @@ import org.junit.jupiter.api.Test;
 public class HttpTaskServerTest {
 
     private KVServer kvServer;
-    private Gson gson = new Gson();
     private HttpTaskServer taskServer;
     private TaskManager taskManager;
 
@@ -40,6 +39,7 @@ public class HttpTaskServerTest {
     Epic epic20 = new Epic("epic20", "description20", new ArrayList<>());
     Subtask subtaskNew20 = new Subtask("subtaskNew20", "descriptionSubtaskNew20", Status.NEW, epic20);
 
+    Gson gson = new Gson();
     String taskJson10 = gson.toJson(task10);
     String taskJson20 = gson.toJson(task20);
     String epicJson10 = gson.toJson(epic10);
@@ -58,8 +58,8 @@ public class HttpTaskServerTest {
 
     @AfterEach
     public void closeAll() {
-        kvServer.stop(1);
-        taskServer.stop(1);
+        kvServer.stop(0);
+        taskServer.stop(0);
     }
 
     @Test   // #1
@@ -276,7 +276,7 @@ public class HttpTaskServerTest {
         request = HttpRequest.newBuilder().uri(regURI)                   // запрос получения списка сабтасков для эпика
                 .GET()
                 .build();
-        HttpResponse<String> responseEpic = client.send(request, handler);
+        HttpResponse<String> responseEpic = client.send(request, handler);      // ЗДЕСЬ ОШИБКА
 
         JsonElement jsonElementEpicTaskList = JsonParser.parseString(responseEpic.body());
         JsonArray jsonArrayEpicTaskList = jsonElementEpicTaskList.getAsJsonArray();

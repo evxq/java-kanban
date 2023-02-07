@@ -37,19 +37,24 @@ public class KVServer {
 				return;
 			}
 			if ("GET".equals(h.getRequestMethod())) {
-				String key = h.getRequestURI().getRawQuery();
+				String key = h.getRequestURI().getPath().substring("/load/".length());
 				if (key.isEmpty()) {
-					System.out.println("Key для загрузки пустой. key указывается в пути: /save/{key}");
+					System.out.println("Key для загрузки пустой. key указывается в пути: /load/{key}");
 					h.sendResponseHeaders(400, 0);
 					return;
 				}
+				if (data.containsKey(key)){
+					System.out.println("Значение для ключа " + key + " успешно  найдены");
 				String keyData = data.get(key);
 				byte[] bytes = keyData.getBytes(StandardCharsets.UTF_8);
 				h.sendResponseHeaders(200, 0);
 				try (OutputStream os = h.getResponseBody()) {
 					os.write(bytes);
 				}
-				System.out.println("Загрузка по ключу " + key + " успешно проведена");
+				} else {
+					System.out.println("Значение для ключа " + key + " не найдено");
+					h.sendResponseHeaders(404, 0);
+				}
 			} else {
 				System.out.println("/load ждёт GET-запрос, а получил " + h.getRequestMethod());
 				h.sendResponseHeaders(405, 0);
@@ -68,7 +73,7 @@ public class KVServer {
 				return;
 			}
 			if ("POST".equals(h.getRequestMethod())) {
-				String key = h.getRequestURI().getRawQuery();
+				String key = h.getRequestURI().getPath().substring("/save/".length());
 				if (key.isEmpty()) {
 					System.out.println("Key для сохранения пустой. key указывается в пути: /save/{key}");
 					h.sendResponseHeaders(400, 0);

@@ -8,12 +8,16 @@ import java.net.http.HttpResponse;
 
 
 public class KVTaskClient {
-    private final URI url;
+    private URI url;
     public String API_TOKEN;
     HttpClient client;
 
     public KVTaskClient(String url) throws IOException, InterruptedException {
         client = HttpClient.newHttpClient();
+        getToken(url);
+    }
+
+    private void getToken(String url) throws IOException, InterruptedException {
         this.url = URI.create(url);
         URI registeredURL = URI.create(url + "/register");
         HttpRequest request = HttpRequest.newBuilder().uri(registeredURL).GET().build();
@@ -22,12 +26,11 @@ public class KVTaskClient {
     }
 
     public void put(String key, String json) throws IOException, InterruptedException {                                 // POST /save/<ключ>?API_TOKEN=
-        final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(json);
-        URI postUrl = URI.create(url.toString() + "/save/?API_TOKEN=" + key);
+        URI postUrl = URI.create(url.toString() + "/save/" + key + "?API_TOKEN=" + API_TOKEN);
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(postUrl)
-                .POST(body)
+                .POST(HttpRequest.BodyPublishers.ofString(json))
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());                     // запрос на сохранение задачи
 
@@ -40,24 +43,16 @@ public class KVTaskClient {
 
     public String load(String key) {                                           // GET /load/<ключ>?API_TOKEN=
         try {
-            URI loadUrl = URI.create(url.toString() + "/load/?API_TOKEN=" + key);
+            URI loadUrl = URI.create(url.toString() + "/load/" + key + "?API_TOKEN=" + API_TOKEN);
 
             HttpRequest request = HttpRequest.newBuilder()
                 .uri(loadUrl)
-                .header("Accept", "application/json")
                 .GET()
                 .build();
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());                 // запрос на получение задачи
 
             if (response.statusCode() == 200) {
-                String s = String.valueOf(response.body());
-                String json = "";
-                for (char chars: s.toCharArray()) {
-                    if (chars != '\\')
-                        json = json + chars;
-                }
-                json = json.replace("}\",\"{","},{").replace("[\"","[").replace("\"]","]");
-                return json;
+                return response.body();
             } else {
                 System.out.println("Что-то пошло не так. Сервер вернул код состояния: " + response.statusCode());
             }

@@ -1,5 +1,6 @@
 package ru.yandex.praktikum.ivanov.kanban.managers.tasksManagers;
 
+import ru.yandex.praktikum.ivanov.kanban.exceptions.ValidationTaskException;
 import ru.yandex.praktikum.ivanov.kanban.managers.Managers;
 import ru.yandex.praktikum.ivanov.kanban.managers.historyManagers.HistoryManager;
 import ru.yandex.praktikum.ivanov.kanban.tasks.*;
@@ -243,10 +244,6 @@ public class InMemoryTaskManager implements TaskManager {
         }
         subtaskMap.remove(id);
         historyObject.remove(id);                                         // <ТЗ-5> удаление Subtask из истории_просмотров
-        /*if (!epicMap.isEmpty()) {
-            epicMap.get(epicId).getEpicTaskList().remove(subtaskMap.get(id));               // удаление Subtask из списка Epic
-            epicMap.get(epicId).checkEpicStatus();                                          // проверить статус соответствующего Epic
-        }*/
     }
 
     @Override
