@@ -2,7 +2,6 @@ package ru.yandex.praktikum.ivanov.kanban.tasks;
 
 public class Subtask extends Task {
     private Epic epic;
-    public String subtaskType;
     private int epicId;
 
     public Subtask(String name, String description, Status status, Epic epic) {

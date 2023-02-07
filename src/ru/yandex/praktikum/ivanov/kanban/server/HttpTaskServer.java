@@ -130,45 +130,30 @@ public class HttpTaskServer {
                     httpManager.updateEpic(epic);
                     writeResponse(exchange,"Обновлен Epic id=" + epic.getId(), 200);
                 }
-                else if (path.contains("/tasks/epic/")) {                                            // POST /tasks/task/ Body: {..}
+                else if (path.contains("/tasks/epic/")) {
                     Epic epic = gson.fromJson(jsonBody, Epic.class);
-                    /*if (epic.getId() != null) {
-                        httpManager.updateEpic(epic);
-                        writeResponse(exchange,"Обновлен Epic id=" + epic.getId(), 200);
-                    } else {*/
-                        Epic newEpic = httpManager.createEpic(epic);
-                        writeResponse(exchange,"Создан Epic id=" + newEpic.getId(), 200);
-//                    }
+                    Epic newEpic = httpManager.createEpic(epic);
+                    writeResponse(exchange,"Создан Epic id=" + newEpic.getId(), 200);
                 }
                 else if (Pattern.matches("/tasks/subtask/\\d+", path)) {
                     Subtask subtask = gson.fromJson(jsonBody, Subtask.class);
                     httpManager.updateSubtask(subtask);
                     writeResponse(exchange,"Обновлен Subtask id=" + subtask.getId(), 200);
                 }
-                else if (path.contains("/tasks/subtask/")) {                                       // POST /tasks/task/ Body: {..}
+                else if (path.contains("/tasks/subtask/")) {
                     Subtask subtask = gson.fromJson(jsonBody, Subtask.class);
-                    /*if (subtask.getId() != null) {
-                        httpManager.updateSubtask(subtask);
-                        writeResponse(exchange,"Обновлен Subtask id=" + subtask.getId(), 200);
-                    } else {*/
-                        Subtask newSubtask = httpManager.createSubtask(subtask);
-                        writeResponse(exchange,"Создан Subtask id=" + newSubtask.getId(), 200);
-//                    }
+                    Subtask newSubtask = httpManager.createSubtask(subtask);
+                    writeResponse(exchange,"Создан Subtask id=" + newSubtask.getId(), 200);
                 }
                 else if (Pattern.matches("/tasks/task/\\d+", path)) {
                     Task task = gson.fromJson(jsonBody, Task.class);
                     httpManager.updateTask(task);
                     writeResponse(exchange,"Обновлен Task id=" + task.getId(), 200);
                 }
-                else if (path.contains("/tasks/task/")) {                                       // POST /tasks/task/ Body: {..}
+                else if (path.contains("/tasks/task/")) {
                     Task task = gson.fromJson(jsonBody, Task.class);
-                    /*if (task.getId() != null) {
-                        httpManager.updateTask(task);
-                        writeResponse(exchange,"Обновлен Task id=" + task.getId(), 200);
-                    } else {*/
-                        Task newTask = httpManager.createTask(task);
-                        writeResponse(exchange,"Создан Task id=" + newTask.getId(), 200);
-//                    }
+                    Task newTask = httpManager.createTask(task);
+                    writeResponse(exchange,"Создан Task id=" + newTask.getId(), 200);
                 }
                 else {
                     writeResponse(exchange,"Путь не соответствует шаблону", 400);
@@ -181,19 +166,19 @@ public class HttpTaskServer {
         private void handleGetTasks(HttpExchange exchange, String path) throws IOException {
             Gson gson = new Gson();
 
-            if (path.equals("/tasks/task/")) {                                                    // GET /tasks/task/
+            if (path.equals("/tasks/task/")) {
                 String taskListJson = gson.toJson(httpManager.getTaskList());
                 writeResponse(exchange, taskListJson, 200);
             }
-            else if (path.equals("/tasks/subtask/")) {                                            // GET /tasks/subtask/
+            else if (path.equals("/tasks/subtask/")) {
                 String subtaskListJson = gson.toJson(httpManager.getSubtaskList());
                 writeResponse(exchange, subtaskListJson, 200);
             }
-            else if (path.equals("/tasks/epic/")) {                                               // GET /tasks/epic/
+            else if (path.equals("/tasks/epic/")) {
                 String epicListJson = gson.toJson(httpManager.getEpicList());
                 writeResponse(exchange, epicListJson, 200);
             }
-            else if (path.contains("/tasks/task/?id=")) {                                         // GET /tasks/task/?id=
+            else if (path.contains("/tasks/task/?id=")) {
                 String pathId = path.split("id=")[1];
                 int id = Integer.parseInt(pathId);
                 Task task = httpManager.getTaskById(id);
@@ -204,7 +189,7 @@ public class HttpTaskServer {
                     writeResponse(exchange, taskJson, 200);
                 }
             }
-            else if (path.contains("/tasks/subtask/?id=")) {                                      // GET /tasks/subtask/?id=
+            else if (path.contains("/tasks/subtask/?id=")) {
                 String pathId = path.split("id=")[1];
                 int id = Integer.parseInt(pathId);
                 Subtask subtask = httpManager.getSubtaskById(id);
@@ -215,7 +200,7 @@ public class HttpTaskServer {
                     writeResponse(exchange, subtaskJson, 200);
                 }
             }
-            else if (path.contains("/tasks/epic/?id=")) {                                         // GET /tasks/epic/?id=
+            else if (path.contains("/tasks/epic/?id=")) {
                 String pathId = path.split("id=")[1];
                 int id = Integer.parseInt(pathId);
                 Epic epic = httpManager.getEpicById(id);
@@ -226,7 +211,7 @@ public class HttpTaskServer {
                     writeResponse(exchange, epicJson, 200);
                 }
             }
-            else if (path.contains("/tasks/subtask/epic/?id=")) {                                 // GET /tasks/subtask/epic/?id=
+            else if (path.contains("/tasks/subtask/epic/?id=")) {
                 String pathId = path.split("id=")[1];
                 int id = Integer.parseInt(pathId);
                 if (httpManager.getEpicList().isEmpty()) {
@@ -251,11 +236,11 @@ public class HttpTaskServer {
                     }
                 }
             }
-            else if (path.equals("/tasks/history/")) {                                          // GET /tasks/history
+            else if (path.equals("/tasks/history/")) {
                 String history = gson.toJson(httpManager.getHistory());
                 writeResponse(exchange, history, 200);
             }
-            else if (path.equals("/tasks/")) {                                                  // GET /tasks/
+            else if (path.equals("/tasks/")) {
                     String priority = gson.toJson(httpManager.getPrioritizedTasks());
                 writeResponse(exchange, priority, 200);
             }

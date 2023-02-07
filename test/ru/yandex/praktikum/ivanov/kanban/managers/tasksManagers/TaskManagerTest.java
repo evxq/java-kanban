@@ -1,9 +1,6 @@
-package ru.yandex.praktikum.ivanov.kanban.managersTest.tasksManagersTest;
+package ru.yandex.praktikum.ivanov.kanban.managers.tasksManagers;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.yandex.praktikum.ivanov.kanban.managers.Managers;
-import ru.yandex.praktikum.ivanov.kanban.managers.tasksManagers.TaskManager;
 import ru.yandex.praktikum.ivanov.kanban.tasks.*;
 
 import java.io.IOException;

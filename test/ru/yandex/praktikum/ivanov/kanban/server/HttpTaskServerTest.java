@@ -1,10 +1,8 @@
-package ru.yandex.praktikum.ivanov.kanban.serverTest;
+package ru.yandex.praktikum.ivanov.kanban.server;
 
 import com.google.gson.*;
 import ru.yandex.praktikum.ivanov.kanban.managers.Managers;
 import ru.yandex.praktikum.ivanov.kanban.managers.tasksManagers.TaskManager;
-import ru.yandex.praktikum.ivanov.kanban.server.HttpTaskServer;
-import ru.yandex.praktikum.ivanov.kanban.server.KVServer;
 import ru.yandex.praktikum.ivanov.kanban.tasks.*;
 
 import java.io.IOException;

@@ -1,8 +1,6 @@
-package ru.yandex.praktikum.ivanov.kanban.managersTest.tasksManagersTest;
+package ru.yandex.praktikum.ivanov.kanban.managers.tasksManagers;
 
 import org.junit.jupiter.api.BeforeEach;
-import ru.yandex.praktikum.ivanov.kanban.managers.Managers;
-import ru.yandex.praktikum.ivanov.kanban.managers.tasksManagers.InMemoryTaskManager;
 
 import java.io.IOException;
 
@@ -11,6 +9,5 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
     @Override
     protected void createManager() throws IOException, InterruptedException {
         taskManager = new InMemoryTaskManager();
-
     }
 }

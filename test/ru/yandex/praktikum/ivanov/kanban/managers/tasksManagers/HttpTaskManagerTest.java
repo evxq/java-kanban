@@ -1,12 +1,10 @@
-package ru.yandex.praktikum.ivanov.kanban.managersTest.tasksManagersTest;
+package ru.yandex.praktikum.ivanov.kanban.managers.tasksManagers;
 
-import com.google.gson.Gson;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.praktikum.ivanov.kanban.managers.Managers;
-import ru.yandex.praktikum.ivanov.kanban.managers.tasksManagers.HttpTaskManager;
 import ru.yandex.praktikum.ivanov.kanban.server.KVServer;
 import ru.yandex.praktikum.ivanov.kanban.tasks.Status;
 import ru.yandex.praktikum.ivanov.kanban.tasks.Task;

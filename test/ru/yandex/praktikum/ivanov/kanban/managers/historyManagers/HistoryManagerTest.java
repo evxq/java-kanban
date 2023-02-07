@@ -1,10 +1,6 @@
-package ru.yandex.praktikum.ivanov.kanban.managersTest.historyManagersTest;
+package ru.yandex.praktikum.ivanov.kanban.managers.historyManagers;
 
 import org.junit.jupiter.api.Test;
-import ru.yandex.praktikum.ivanov.kanban.managers.Managers;
-import ru.yandex.praktikum.ivanov.kanban.managers.historyManagers.HistoryManager;
-import ru.yandex.praktikum.ivanov.kanban.managers.historyManagers.InMemoryHistoryManager;
-import ru.yandex.praktikum.ivanov.kanban.managers.tasksManagers.TaskManager;
 import ru.yandex.praktikum.ivanov.kanban.tasks.Status;
 import ru.yandex.praktikum.ivanov.kanban.tasks.Task;
 

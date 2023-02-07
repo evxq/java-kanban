@@ -269,7 +269,7 @@ public class InMemoryTaskManager implements TaskManager {
             return null;
         }
         if (epicMap.get(id).getEpicTaskList().isEmpty()) {                        // добавление сабтасков в эпик по его списку id сабтасков
-            for (Integer i: epicMap.get(id).getEpicIDTaskList()) {
+            for (Integer i: epicMap.get(id).getEpicTaskListID()) {
                 epicMap.get(id).getEpicTaskList().add(subtaskMap.get(i));
             }
         }

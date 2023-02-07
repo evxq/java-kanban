@@ -1,12 +1,9 @@
-package ru.yandex.praktikum.ivanov.kanban.tasksTest;
+package ru.yandex.praktikum.ivanov.kanban.tasks;
 
 import org.junit.jupiter.api.Test;
-import ru.yandex.praktikum.ivanov.kanban.managers.Managers;
 import ru.yandex.praktikum.ivanov.kanban.managers.tasksManagers.InMemoryTaskManager;
 import ru.yandex.praktikum.ivanov.kanban.managers.tasksManagers.TaskManager;
-import ru.yandex.praktikum.ivanov.kanban.tasks.*;
 
-import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
